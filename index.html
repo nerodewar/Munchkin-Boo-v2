@@ -6,102 +6,129 @@
   <title>Munchkin Boo</title>
 
   <style>
-    :root {
-      --bg: #050A1A;          /* almost black navy */
-      --card: #0B1433;        /* deep blue card */
-      --text: #F4F6FF;        /* soft white */
-      --muted: #A8B1D9;       /* muted lavender */
-      --border: #1C2A5E;
-      --primary: #7C6CFF;     /* friendly purple */
-      --primaryText: #0B0F2A;
-      --button: #121C46;
-      --buttonHover: #18235C;
-      --radius: 20px;
+    :root{
+      --bg:#050A1A;          /* almost black navy */
+      --card:#0B1433;        /* deep blue card */
+      --text:#F4F6FF;        /* soft white */
+      --muted:#A8B1D9;       /* muted lavender */
+      --border:#1C2A5E;
+      --primary:#7C6CFF;     /* friendly purple */
+      --primaryText:#0B0F2A;
+      --button:#121C46;
+      --buttonHover:#18235C;
+      --radius:20px;
     }
 
-    * { box-sizing: border-box; }
+    *{ box-sizing:border-box; }
 
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
     }
 
-    .wrap { width: min(520px, 100%); }
+    .wrap{ width:min(520px,100%); }
 
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 26px;
-      box-shadow: 0 20px 40px rgba(0,0,0,.45);
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:26px;
+      box-shadow:0 20px 40px rgba(0,0,0,.45);
     }
 
-    h1 {
-      font-size: 1.45rem;
-      margin: 0 0 10px;
-      letter-spacing: .3px;
+    h1{
+      font-size:1.45rem;
+      margin:0 0 10px;
+      letter-spacing:.3px;
     }
 
-    p {
-      margin: 0;
-      line-height: 1.6;
+    h2{
+      margin:10px 0 8px;
+      font-size:1.25rem;
+      letter-spacing:.2px;
     }
 
-    .muted { color: var(--muted); }
+    p{ margin:0; line-height:1.65; }
+    .muted{ color:var(--muted); }
 
-    .spacer { height: 16px; }
+    .spacer{ height:16px; }
 
-    .btn {
-      width: 100%;
-      padding: 14px 16px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: var(--button);
-      color: var(--text);
-      font-weight: 800;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background .15s ease, transform .05s ease;
+    .btn{
+      width:100%;
+      padding:14px 16px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background:var(--button);
+      color:var(--text);
+      font-weight:800;
+      font-size:1rem;
+      cursor:pointer;
+      transition:background .15s ease, transform .05s ease;
+    }
+    .btn:hover{ background:var(--buttonHover); }
+    .btn:active{ transform:translateY(1px); }
+
+    .btn.primary{
+      background:var(--primary);
+      color:var(--primaryText);
+      border:none;
     }
 
-    .btn:hover { background: var(--buttonHover); }
-    .btn:active { transform: translateY(1px); }
-
-    .btn.primary {
-      background: var(--primary);
-      color: var(--primaryText);
-      border: none;
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
     }
 
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+    input{
+      width:100%;
+      padding:14px 16px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background:#0E1840;
+      color:var(--text);
+      font-size:1rem;
+      outline:none;
+    }
+    input::placeholder{ color:#7F88B8; }
+
+    .hidden{ display:none; }
+
+    .storyArt{
+      width:100%;
+      aspect-ratio:1/1;
+      object-fit:cover;
+      border-radius:16px;
+      display:block;
+      border:1px solid var(--border);
+      margin:0 auto 14px;
     }
 
-    input {
-      width: 100%;
-      padding: 14px 16px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: #0E1840;
-      color: var(--text);
-      font-size: 1rem;
-      outline: none;
+    .storyBody p{ margin:0 0 12px; }
+    .storyBody p:last-child{ margin-bottom:0; }
+
+    .topRow{
+      display:flex;
+      gap:10px;
+      margin-top:12px;
     }
+    .topRow .btn{ flex:1; }
 
-    input::placeholder { color: #7F88B8; }
-
-    .hidden { display: none; }
+    .status{
+      margin-top:10px;
+      font-size:0.95rem;
+      color:var(--muted);
+    }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <div class="card">
@@ -109,40 +136,33 @@
       <!-- STEP 1: WELCOME + START -->
       <section id="step1">
         <h1>Hi, I’m Munchkin Boo 👋</h1>
-        <p class="muted">
-          I’m your personal bedtime story application.
-        </p>
-
+        <p class="muted">I’m your personal bedtime story application.</p>
         <div class="spacer"></div>
-
         <p class="muted">Press start to begin.</p>
-
         <div class="spacer"></div>
-
         <button class="btn primary" id="startBtn">Start</button>
+        <div class="status" id="loadStatus">Loading stories…</div>
       </section>
 
       <!-- STEP 2: NAME -->
       <section id="step2" class="hidden">
         <h1>What’s your name?</h1>
-        <p class="muted">So I can personalise things for you.</p>
-
+        <p class="muted">So I can personalise your story.</p>
         <div class="spacer"></div>
-
-        <input id="nameInput" placeholder="Type your name…" />
-
+        <input id="nameInput" placeholder="Type your name…" autocomplete="given-name" />
         <div class="spacer"></div>
-
         <button class="btn primary" id="toMood">Continue</button>
+        <div class="spacer"></div>
+        <button class="btn" id="backToWelcome">Back</button>
       </section>
 
       <!-- STEP 3: MOOD -->
       <section id="step3" class="hidden">
         <h1>What mood are you in?</h1>
         <p class="muted">Choose one:</p>
-
         <div class="spacer"></div>
 
+        <!-- IMPORTANT: data-mood values match stories.json (lowercase) -->
         <div class="row">
           <button class="btn" data-mood="sleepy">😴 Sleepy</button>
           <button class="btn" data-mood="hungry">🍪 Hungry</button>
@@ -151,29 +171,164 @@
         <div class="spacer"></div>
 
         <button class="btn" data-mood="naughty">😈 Naughty</button>
-      </section>
-
-      <!-- STEP 4: STORY DISPLAY -->
-      <section id="step4" class="hidden">
-        <div id="storyContainer"></div>
 
         <div class="spacer"></div>
+        <button class="btn" id="backToName">Back</button>
+      </section>
 
-        <button class="btn primary" id="restart">Restart</button>
+      <!-- STEP 4: STORY -->
+      <section id="step4" class="hidden">
+        <img class="storyArt" id="storyArt" alt="" />
+        <h2 id="storyTitle"></h2>
+        <div class="storyBody" id="storyBody"></div>
+
+        <div class="topRow">
+          <button class="btn primary" id="anotherStory">Another story</button>
+          <button class="btn" id="changeMood">Change mood</button>
+        </div>
+
+        <div class="spacer"></div>
+        <button class="btn" id="restart">Restart</button>
       </section>
 
     </div>
   </div>
 
   <script>
-    const state = { name:"", mood:"" };
+    // ======================
+    // State
+    // ======================
+    const state = {
+      name: "",
+      mood: "",
+      stories: [],
+      lastStoryIdByMood: {} // avoid repeating the same story twice in a row
+    };
 
     const steps = ["step1","step2","step3","step4"];
-    const show = id => steps.forEach(s =>
-      document.getElementById(s).classList.toggle("hidden", s !== id)
-    );
+    function show(id){
+      steps.forEach(s => document.getElementById(s).classList.toggle("hidden", s !== id));
+    }
 
-    document.getElementById("startBtn").onclick = () => show("step2");
+    function cleanName(input){
+      const trimmed = (input || "").trim();
+      const safe = trimmed.replace(/[^a-zA-Z '-]/g, "");
+      return safe.slice(0, 30) || "";
+    }
 
-    document.getElementById("toMood").onclick = () => {
-      const name = document.
+    function pickRandom(arr){
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function pickStoryForMood(mood){
+      const options = state.stories.filter(s => s.mood === mood);
+      if (!options.length) return null;
+
+      const lastId = state.lastStoryIdByMood[mood] || null;
+      if (options.length === 1) return options[0];
+
+      let picked;
+      do { picked = pickRandom(options); }
+      while (picked.id === lastId);
+
+      state.lastStoryIdByMood[mood] = picked.id;
+      return picked;
+    }
+
+    function renderStory(story){
+      const safeName = state.name || "Friend";
+
+      // artwork
+      const art = document.getElementById("storyArt");
+      art.src = story.art;
+      art.alt = story.title;
+
+      // title
+      document.getElementById("storyTitle").textContent = story.title;
+
+      // paragraphs
+      const body = document.getElementById("storyBody");
+      const html = (story.text || []).map(p => {
+        const filled = String(p).replaceAll("{{name}}", safeName);
+        return `<p>${filled}</p>`;
+      }).join("");
+      body.innerHTML = html;
+    }
+
+    async function loadStories(){
+      const status = document.getElementById("loadStatus");
+      try {
+        const res = await fetch("./stories.json");
+        if (!res.ok) throw new Error("stories.json not found");
+        const data = await res.json();
+        state.stories = data.stories || [];
+        status.textContent = `Loaded ${state.stories.length} stories ✅`;
+      } catch (err) {
+        console.error(err);
+        status.textContent = "Couldn’t load stories. Check stories.json is in the repo root.";
+      }
+    }
+
+    // ======================
+    // Wire up UI
+    // ======================
+    document.getElementById("startBtn").addEventListener("click", () => show("step2"));
+
+    document.getElementById("backToWelcome").addEventListener("click", () => show("step1"));
+
+    document.getElementById("toMood").addEventListener("click", () => {
+      const nm = cleanName(document.getElementById("nameInput").value);
+      if (!nm) return;
+      state.name = nm;
+      localStorage.setItem("munchkin_name", nm);
+      show("step3");
+    });
+
+    document.getElementById("backToName").addEventListener("click", () => show("step2"));
+
+    // mood selection -> story
+    document.getElementById("step3").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-mood]");
+      if (!btn) return;
+
+      state.mood = btn.getAttribute("data-mood");
+
+      const story = pickStoryForMood(state.mood);
+      if (!story) {
+        // fallback if mood has no stories
+        document.getElementById("storyTitle").textContent = "No stories yet";
+        document.getElementById("storyBody").innerHTML =
+          `<p class="muted">No stories found for mood: ${state.mood}</p>`;
+        document.getElementById("storyArt").src = "";
+        document.getElementById("storyArt").alt = "";
+        show("step4");
+        return;
+      }
+
+      renderStory(story);
+      show("step4");
+    });
+
+    document.getElementById("anotherStory").addEventListener("click", () => {
+      const story = pickStoryForMood(state.mood);
+      if (story) renderStory(story);
+    });
+
+    document.getElementById("changeMood").addEventListener("click", () => show("step3"));
+
+    document.getElementById("restart").addEventListener("click", () => {
+      state.name = "";
+      state.mood = "";
+      document.getElementById("nameInput").value = "";
+      show("step1");
+    });
+
+    // Remember name
+    document.getElementById("nameInput").value = localStorage.getItem("munchkin_name") || "";
+
+    // Load stories on boot
+    loadStories();
+    show("step1");
+  </script>
+</body>
+</html>
