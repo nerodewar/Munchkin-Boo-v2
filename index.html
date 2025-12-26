@@ -223,3 +223,42 @@
   </script>
 </body>
 </html>
+
+<script>
+  let STORIES = [];
+
+  async function loadStories() {
+    const res = await fetch("./stories.json"); // important: relative path for GitHub Pages
+    if (!res.ok) throw new Error("Could not load stories.json");
+    const data = await res.json();
+    STORIES = data.stories || [];
+  }
+
+  function pickRandom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function getStoryByMood(mood) {
+    const options = STORIES.filter(s => s.mood === mood);
+    return options.length ? pickRandom(options) : null;
+  }
+
+  function renderStory(story, childName) {
+    const safeName = (childName || "Friend").trim() || "Friend";
+
+    const paragraphs = story.text
+      .map(p => `<p>${p.replaceAll("{{name}}", safeName)}</p>`)
+      .join("");
+
+    document.getElementById("storyContainer").innerHTML = `
+      <img src="${story.art}" alt="${story.title}"
+           style="width:100%;max-width:520px;border-radius:16px;display:block;margin:0 auto 14px;" />
+      <h2>${story.title}</h2>
+      <div style="line-height:1.7">${paragraphs}</div>
+    `;
+  }
+
+  // Call this once when the page loads
+  loadStories().catch(console.error);
+</script>
+
