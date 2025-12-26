@@ -1,0 +1,79 @@
+{
+  "stories": [
+    {
+      "id": "sleepy_floating_pillow",
+      "mood": "sleepy",
+      "title": "The Floating Pillow",
+      "art": "assets/art/sleepy-floating-pillow.png",
+      "text": [
+        "Once upon a quiet night, {{name}} found a pillow that felt lighter than air. When {{name}} rested their head on it, the pillow slowly floated up, drifting through the moonlit sky. Stars winked softly as the pillow carried {{name}} past glowing clouds and sleepy owls. Far below, rooftops looked like tiny squares, and the world felt peaceful and still. A warm breeze wrapped around {{name}} like a hug, and the night smelled faintly of dreams.",
+        "The pillow hummed a gentle tune, soft and steady, like a lullaby only the night could sing. With every note, {{name}}’s breathing slowed and their eyes grew heavier and heavier. Soon, the pillow floated back down, placing {{name}} safely in bed. Wrapped in warmth and calm, {{name}} sighed happily and drifted into the deepest, coziest sleep."
+      ]
+    },
+    {
+      "id": "sleepy_cloud_counting",
+      "mood": "sleepy",
+      "title": "Cloud Counting",
+      "art": "assets/art/sleepy-cloud-counting.png",
+      "text": [
+        "Tonight, {{name}} counted clouds instead of sheep. One fluffy cloud… two sleepy clouds… three drifting clouds… Each cloud floated across the sky like it had nowhere to be and all the time in the world. Some clouds looked like pillows, others like soft mountains, and one even looked like a smiling bunny before slowly melting away.",
+        "A cool night breeze whispered through the sky, guiding the clouds along their quiet path. {{name}} imagined lying on each cloud, sinking softly into its cottony shape, feeling lighter and lighter. Four glowing clouds drifted past the moon, their edges shining gently like lanterns in the dark. Five clouds yawned and stretched, ready to rest.",
+        "The counting grew slower, the numbers quieter. Thoughts softened and faded like mist. By the time {{name}} reached the next cloud, the counting slipped away completely — and sleep gently arrived all on its own, wrapping {{name}} in calm, dreamy stillness."
+      ]
+    },
+    {
+      "id": "hungry_midnight_pancake_quest",
+      "mood": "hungry",
+      "title": "The Midnight Pancake Quest",
+      "art": "assets/art/hungry-pancake-quest.png",
+      "text": [
+        "{{name}}’s tummy rumbled like a tiny thunderstorm. {{name}} put on a brave face and a chef hat that was definitely too big.",
+        "{{name}} and Munchkin Boo sneaked into the kitchen like two secret agents. The mission: pancakes.",
+        "Munchkin Boo mixed the batter with dramatic seriousness. {{name}} guarded the blueberries like precious treasure. When the first pancake landed in the pan—sizzle!—it smelled like happiness.",
+        "They built a pancake tower and crowned it with a blueberry on top. One bite later, the thunderstorm tummy turned into a satisfied purr.",
+        "“Mission complete,” whispered Munchkin Boo. {{name}} grinned. “Best mission ever.”"
+      ]
+    },
+    {
+      "id": "hungry_famous_sandwich",
+      "mood": "hungry",
+      "title": "The Sandwich That Wanted to Be Famous",
+      "art": "assets/art/hungry-famous-sandwich.png",
+      "text": [
+        "{{name}} opened the fridge and found a sandwich wrapped like a present. A tiny note said, “I’m destined for greatness.”",
+        "{{name}} laughed softly and called Munchkin Boo to help. Together, they rolled out the sandwich’s “red carpet”: a plate, a fancy napkin, and two dramatic pickles on the side.",
+        "The sandwich stood tall—bread, cheese, tomato, and a brave leaf of lettuce. {{name}} took a bite.",
+        "“Oh!” {{name}} said. “You are famous.” The sandwich—if sandwiches could—would have blushed.",
+        "And the fridge? It applauded silently, as fridges do."
+      ]
+    },
+    {
+      "id": "naughty_missing_cookies",
+      "mood": "naughty",
+      "title": "The Case of the Missing Cookies",
+      "art": "assets/art/naughty-missing-cookies.png",
+      "text": [
+        "Munchkin Boo gasped. “{{name}}! The cookie jar is suspiciously lighter!”",
+        "{{name}}’s eyes went wide. “That’s… very suspicious.”",
+        "Together, {{name}} and Munchkin Boo investigated the kitchen. Clue #1: crumbs near the counter. Clue #2: a tiny chocolate smudge. Clue #3: a sock on the floor that absolutely did not belong there.",
+        "Suddenly, the cat waddled by—round, slow, and extremely innocent-looking. Munchkin Boo narrowed their eyes. “Aha. The Cookie Bandit!”",
+        "The cat meowed as if to say, No comment. {{name}} laughed. “We’ve been out-naughtied.”",
+        "So they made a new batch of cookies together—this time with extra “security measures,” which was really just Munchkin Boo standing guard like a very serious marshmallow."
+      ]
+    },
+    {
+      "id": "naughty_button_mischief",
+      "mood": "naughty",
+      "title": "The Great Button Mischief",
+      "art": "assets/art/naughty-button-mischief.png",
+      "text": [
+        "{{name}} found a jar of colorful buttons and declared, “These are treasure.”",
+        "Munchkin Boo nodded wisely. “Then we must protect the treasure… by hiding it.”",
+        "They hid buttons in silly places: one on the bookshelf like a secret jewel, one in a slipper like a surprise, and one right on Munchkin Boo’s nose (the best hiding spot of all).",
+        "When {{name}}’s family noticed the mysterious buttons, they started laughing and searching like it was a scavenger hunt.",
+        "At the end, Munchkin Boo made a grand speech: “The treasure was never the buttons… it was the giggles.”",
+        "{{name}} bowed deeply. “We are very naughty.” Munchkin Boo bowed back. “And very proud.”"
+      ]
+    }
+  ]
+}
