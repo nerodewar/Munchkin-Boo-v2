@@ -6,100 +6,100 @@
   <title>Munchkin Boo</title>
 
   <style>
-    :root{
-      --bg:#050A1A;          /* almost black navy */
-      --card:#0B1433;        /* deep blue card */
-      --text:#F4F6FF;        /* soft white */
-      --muted:#A8B1D9;       /* muted lavender */
-      --border:#1C2A5E;
-      --primary:#7C6CFF;     /* friendly purple */
-      --primaryText:#0B0F2A;
-      --button:#121C46;
-      --buttonHover:#18235C;
-      --radius:20px;
+    :root {
+      --bg: #050A1A;          /* almost black navy */
+      --card: #0B1433;        /* deep blue card */
+      --text: #F4F6FF;        /* soft white */
+      --muted: #A8B1D9;       /* muted lavender */
+      --border: #1C2A5E;
+      --primary: #7C6CFF;     /* friendly purple */
+      --primaryText: #0B0F2A;
+      --button: #121C46;
+      --buttonHover: #18235C;
+      --radius: 20px;
     }
 
-    *{ box-sizing:border-box; }
+    * { box-sizing: border-box; }
 
-    body{
-      margin:0;
-      font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:var(--bg);
-      color:var(--text);
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:20px;
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
 
-    .wrap{ width:min(520px,100%); }
+    .wrap { width: min(520px, 100%); }
 
-    .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      padding:26px;
-      box-shadow:0 20px 40px rgba(0,0,0,.45);
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px;
+      box-shadow: 0 20px 40px rgba(0,0,0,.45);
     }
 
-    h1{
-      font-size:1.45rem;
-      margin:0 0 10px;
-      letter-spacing:.3px;
+    h1 {
+      font-size: 1.45rem;
+      margin: 0 0 10px;
+      letter-spacing: .3px;
     }
 
-    p{
-      margin:0;
-      line-height:1.6;
+    p {
+      margin: 0;
+      line-height: 1.6;
     }
 
-    .muted{ color:var(--muted); }
+    .muted { color: var(--muted); }
 
-    .spacer{ height:16px; }
+    .spacer { height: 16px; }
 
-    .btn{
-      width:100%;
-      padding:14px 16px;
-      border-radius:16px;
-      border:1px solid var(--border);
-      background:var(--button);
-      color:var(--text);
-      font-weight:800;
-      font-size:1rem;
-      cursor:pointer;
-      transition:background .15s ease, transform .05s ease;
+    .btn {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--button);
+      color: var(--text);
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background .15s ease, transform .05s ease;
     }
 
-    .btn:hover{ background:var(--buttonHover); }
-    .btn:active{ transform:translateY(1px); }
+    .btn:hover { background: var(--buttonHover); }
+    .btn:active { transform: translateY(1px); }
 
-    .btn.primary{
-      background:var(--primary);
-      color:var(--primaryText);
-      border:none;
+    .btn.primary {
+      background: var(--primary);
+      color: var(--primaryText);
+      border: none;
     }
 
-    .row{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
     }
 
-    input{
-      width:100%;
-      padding:14px 16px;
-      border-radius:16px;
-      border:1px solid var(--border);
-      background:#0E1840;
-      color:var(--text);
-      font-size:1rem;
-      outline:none;
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: #0E1840;
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
     }
 
-    input::placeholder{ color:#7F88B8; }
+    input::placeholder { color: #7F88B8; }
 
-    .hidden{ display:none; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
@@ -110,7 +110,7 @@
       <section id="step1">
         <h1>Hi, I’m Munchkin Boo 👋</h1>
         <p class="muted">
-          I’m your personal bedtime story and music application.
+          I’m your personal bedtime story application.
         </p>
 
         <div class="spacer"></div>
@@ -144,34 +144,18 @@
         <div class="spacer"></div>
 
         <div class="row">
-          <button class="btn" data-mood="Sleepy">😴 Sleepy</button>
-          <button class="btn" data-mood="Hungry">🍪 Hungry</button>
+          <button class="btn" data-mood="sleepy">😴 Sleepy</button>
+          <button class="btn" data-mood="hungry">🍪 Hungry</button>
         </div>
 
         <div class="spacer"></div>
 
-        <button class="btn" data-mood="Naughty">😈 Naughty</button>
+        <button class="btn" data-mood="naughty">😈 Naughty</button>
       </section>
 
-      <!-- STEP 4: STORY OR SONG -->
+      <!-- STEP 4: STORY DISPLAY -->
       <section id="step4" class="hidden">
-        <h1>What would you like?</h1>
-        <p class="muted">
-          Would you like me to tell you a bedtime story or play you a song?
-        </p>
-
-        <div class="spacer"></div>
-
-        <div class="row">
-          <button class="btn primary" id="chooseStory">📖 Story</button>
-          <button class="btn primary" id="chooseSong">🎵 Song</button>
-        </div>
-      </section>
-
-      <!-- STEP 5: HELLO WORLD -->
-      <section id="step5" class="hidden">
-        <h1>Hello World…</h1>
-        <p class="muted" id="finalText"></p>
+        <div id="storyContainer"></div>
 
         <div class="spacer"></div>
 
@@ -182,9 +166,9 @@
   </div>
 
   <script>
-    const state = { name:"", mood:"", choice:"" };
+    const state = { name:"", mood:"" };
 
-    const steps = ["step1","step2","step3","step4","step5"];
+    const steps = ["step1","step2","step3","step4"];
     const show = id => steps.forEach(s =>
       document.getElementById(s).classList.toggle("hidden", s !== id)
     );
@@ -192,77 +176,4 @@
     document.getElementById("startBtn").onclick = () => show("step2");
 
     document.getElementById("toMood").onclick = () => {
-      const name = document.getElementById("nameInput").value.trim();
-      if(!name) return;
-      state.name = name;
-      show("step3");
-    };
-
-    document.getElementById("step3").onclick = e => {
-      const btn = e.target.closest("[data-mood]");
-      if(!btn) return;
-      state.mood = btn.dataset.mood;
-      show("step4");
-    };
-
-    document.getElementById("chooseStory").onclick = () => finish("story");
-    document.getElementById("chooseSong").onclick = () => finish("song");
-
-    function finish(type){
-      state.choice = type;
-      document.getElementById("finalText").textContent =
-        `Hi ${state.name}! You’re feeling ${state.mood}, and you chose a ${type}.`;
-      show("step5");
-    }
-
-    document.getElementById("restart").onclick = () => {
-      Object.keys(state).forEach(k => state[k]="");
-      document.getElementById("nameInput").value="";
-      show("step1");
-    };
-  </script>
-</body>
-</html>
-
-<script>
-  let STORIES = [];
-
-  async function loadStories() {
-    const res = await fetch("./stories.json"); // important: relative path for GitHub Pages
-    if (!res.ok) throw new Error("Could not load stories.json");
-    const data = await res.json();
-    STORIES = data.stories || [];
-  }
-
-  function pickRandom(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-  }
-
-  function getStoryByMood(mood) {
-    const options = STORIES.filter(s => s.mood === mood);
-    return options.length ? pickRandom(options) : null;
-  }
-
-  function renderStory(story, childName) {
-    const safeName = (childName || "Friend").trim() || "Friend";
-
-    const paragraphs = story.text
-      .map(p => `<p>${p.replaceAll("{{name}}", safeName)}</p>`)
-      .join("");
-
-    document.getElementById("storyContainer").innerHTML = `
-      <img src="${story.art}" alt="${story.title}"
-           style="width:100%;max-width:520px;border-radius:16px;display:block;margin:0 auto 14px;" />
-      <h2>${story.title}</h2>
-      <div style="line-height:1.7">${paragraphs}</div>
-    `;
-  }
-
-  // Call this once when the page loads
-  loadStories().catch(console.error);
-</script>
-
-<div id="storyContainer"></div>
-
-const story = getStoryByMood(selectedMood);
-if (story) renderStory(story, childName);
+      const name = document.
