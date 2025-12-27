@@ -7,12 +7,12 @@
 
   <style>
     :root{
-      --bg:#050A1A;          /* almost black navy */
-      --card:#0B1433;        /* deep blue card */
-      --text:#F4F6FF;        /* soft white */
-      --muted:#A8B1D9;       /* muted lavender */
+      --bg:#050A1A;
+      --card:#0B1433;
+      --text:#F4F6FF;
+      --muted:#A8B1D9;
       --border:#1C2A5E;
-      --primary:#7C6CFF;     /* friendly purple */
+      --primary:#7C6CFF;
       --primaryText:#0B0F2A;
       --button:#121C46;
       --buttonHover:#18235C;
@@ -41,6 +41,7 @@
       border-radius:var(--radius);
       padding:26px;
       box-shadow:0 20px 40px rgba(0,0,0,.45);
+      position:relative;
     }
 
     h1{
@@ -57,7 +58,6 @@
 
     p{ margin:0; line-height:1.65; }
     .muted{ color:var(--muted); }
-
     .spacer{ height:16px; }
 
     .btn{
@@ -126,15 +126,31 @@
       font-size:0.95rem;
       color:var(--muted);
     }
+
+    /* small, nice mute button */
+    .muteBtn{
+      position:absolute;
+      top:14px;
+      right:14px;
+      width:auto;
+      padding:10px 12px;
+      border-radius:14px;
+      font-weight:900;
+      font-size:0.95rem;
+    }
   </style>
 </head>
 
 <body>
   <div class="wrap">
     <div class="card">
-      
- <button id="muteBtn" class="btn">🔊 Sound on</button>
-      
+
+      <!-- Mute button -->
+      <button id="muteBtn" class="btn muteBtn" type="button">🔊 Sound on</button>
+
+      <!-- Theme music player (must be inside the document) -->
+      <audio id="themePlayer" preload="none"></audio>
+
       <!-- STEP 1: WELCOME + START -->
       <section id="step1">
         <h1>Hi, I’m Munchkin Boo 👋</h1>
@@ -142,8 +158,9 @@
         <div class="spacer"></div>
         <p class="muted">Press start to begin.</p>
         <div class="spacer"></div>
-        <button class="btn primary" id="startBtn">Start</button>
+        <button class="btn primary" id="startBtn" type="button">Start</button>
         <div class="status" id="loadStatus">Loading stories…</div>
+        <div class="status" id="audioStatus"></div>
       </section>
 
       <!-- STEP 2: NAME -->
@@ -151,11 +168,13 @@
         <h1>What’s your name?</h1>
         <p class="muted">So I can personalise your story.</p>
         <div class="spacer"></div>
+
         <input id="nameInput" placeholder="Type your name…" autocomplete="given-name" />
+
         <div class="spacer"></div>
-        <button class="btn primary" id="toMood">Continue</button>
+        <button class="btn primary" id="toMood" type="button">Continue</button>
         <div class="spacer"></div>
-        <button class="btn" id="backToWelcome">Back</button>
+        <button class="btn" id="backToWelcome" type="button">Back</button>
       </section>
 
       <!-- STEP 3: MOOD -->
@@ -164,18 +183,17 @@
         <p class="muted">Choose one:</p>
         <div class="spacer"></div>
 
-        <!-- IMPORTANT: data-mood values match stories.json (lowercase) -->
         <div class="row">
-          <button class="btn" data-mood="sleepy">😴 Sleepy</button>
-          <button class="btn" data-mood="hungry">🍪 Hungry</button>
+          <button class="btn" data-mood="sleepy" type="button">😴 Sleepy</button>
+          <button class="btn" data-mood="hungry" type="button">🍪 Hungry</button>
         </div>
 
         <div class="spacer"></div>
 
-        <button class="btn" data-mood="naughty">😈 Naughty</button>
+        <button class="btn" data-mood="naughty" type="button">😈 Naughty</button>
 
         <div class="spacer"></div>
-        <button class="btn" id="backToName">Back</button>
+        <button class="btn" id="backToName" type="button">Back</button>
       </section>
 
       <!-- STEP 4: STORY -->
@@ -185,12 +203,12 @@
         <div class="storyBody" id="storyBody"></div>
 
         <div class="topRow">
-          <button class="btn primary" id="anotherStory">Another story</button>
-          <button class="btn" id="changeMood">Change mood</button>
+          <button class="btn primary" id="anotherStory" type="button">Another story</button>
+          <button class="btn" id="changeMood" type="button">Change mood</button>
         </div>
 
         <div class="spacer"></div>
-        <button class="btn" id="restart">Restart</button>
+        <button class="btn" id="restart" type="button">Restart</button>
       </section>
 
     </div>
@@ -204,7 +222,7 @@
       name: "",
       mood: "",
       stories: [],
-      lastStoryIdByMood: {} // avoid repeating the same story twice in a row
+      lastStoryIdByMood: {}
     };
 
     const steps = ["step1","step2","step3","step4"];
@@ -240,21 +258,18 @@
     function renderStory(story){
       const safeName = state.name || "Friend";
 
-      // artwork
       const art = document.getElementById("storyArt");
+      art.onerror = () => console.log("Image failed to load:", art.src);
       art.src = story.art;
       art.alt = story.title;
 
-      // title
       document.getElementById("storyTitle").textContent = story.title;
 
-      // paragraphs
       const body = document.getElementById("storyBody");
-      const html = (story.text || []).map(p => {
+      body.innerHTML = (story.text || []).map(p => {
         const filled = String(p).replaceAll("{{name}}", safeName);
         return `<p>${filled}</p>`;
       }).join("");
-      body.innerHTML = html;
     }
 
     async function loadStories(){
@@ -272,15 +287,60 @@
     }
 
     // ======================
+    // Audio: Theme + Mute toggle
+    // ======================
+    const themePlayer = document.getElementById("themePlayer");
+    const muteBtn = document.getElementById("muteBtn");
+    const audioStatus = document.getElementById("audioStatus");
+
+    // restore mute preference
+    const savedMuted = localStorage.getItem("munchkin_muted") === "true";
+    themePlayer.muted = savedMuted;
+
+    function updateMuteButton(){
+      muteBtn.textContent = themePlayer.muted ? "🔇 Sound off" : "🔊 Sound on";
+    }
+    updateMuteButton();
+
+    muteBtn.addEventListener("click", () => {
+      themePlayer.muted = !themePlayer.muted;
+      localStorage.setItem("munchkin_muted", themePlayer.muted);
+      updateMuteButton();
+    });
+
+    function startThemeMusic(){
+      // make sure this path matches your repo EXACTLY
+      themePlayer.src = "assets/music/theme-music.m4a";
+      themePlayer.loop = true;
+      themePlayer.volume = 0.5;
+
+      themePlayer.play()
+        .then(() => { audioStatus.textContent = ""; })
+        .catch((err) => {
+          console.log("Theme music blocked:", err);
+          audioStatus.textContent = "Tap Start again if sound doesn’t begin (browser policy).";
+        });
+    }
+
+    function stopThemeMusic(){
+      themePlayer.pause();
+      themePlayer.currentTime = 0;
+    }
+
+    // ======================
     // Wire up UI
     // ======================
-    document.getElementById("startBtn").addEventListener("click", () => show("step2"));
+    document.getElementById("startBtn").addEventListener("click", () => {
+      // Start music on the same click gesture as Start (important!)
+      startThemeMusic();
+      show("step2");
+    });
 
     document.getElementById("backToWelcome").addEventListener("click", () => show("step1"));
 
     document.getElementById("toMood").addEventListener("click", () => {
       const nm = cleanName(document.getElementById("nameInput").value);
-      if (!nm) return;
+      if(!nm) return;
       state.name = nm;
       localStorage.setItem("munchkin_name", nm);
       show("step3");
@@ -288,16 +348,14 @@
 
     document.getElementById("backToName").addEventListener("click", () => show("step2"));
 
-    // mood selection -> story
     document.getElementById("step3").addEventListener("click", (e) => {
       const btn = e.target.closest("[data-mood]");
-      if (!btn) return;
+      if(!btn) return;
 
       state.mood = btn.getAttribute("data-mood");
-
       const story = pickStoryForMood(state.mood);
-      if (!story) {
-        // fallback if mood has no stories
+
+      if(!story){
         document.getElementById("storyTitle").textContent = "No stories yet";
         document.getElementById("storyBody").innerHTML =
           `<p class="muted">No stories found for mood: ${state.mood}</p>`;
@@ -322,41 +380,16 @@
       state.name = "";
       state.mood = "";
       document.getElementById("nameInput").value = "";
+      stopThemeMusic();
       show("step1");
     });
 
     // Remember name
     document.getElementById("nameInput").value = localStorage.getItem("munchkin_name") || "";
 
-    // Load stories on boot
+    // Boot
     loadStories();
     show("step1");
   </script>
 </body>
 </html>
-
-<audio id="themePlayer" preload="none"></audio>
-
-const themePlayer = document.getElementById("themePlayer");
-
-function startThemeMusic() {
-  // Set only when starting (so it doesn’t preload)
-  themePlayer.src = "assets/music/theme-music.m4a";
-  themePlayer.loop = true;
-  themePlayer.volume = 0.5; // adjust to taste (0.0 - 1.0)
-
-  themePlayer.play().catch(() => {
-    // Rare, but if something blocks play, you can show a small “Tap to enable sound” button later
-    console.log("Theme music blocked by browser (autoplay policy).");
-  });
-}
-
-function stopThemeMusic() {
-  themePlayer.pause();
-  themePlayer.currentTime = 0;
-}
-
-document.getElementById("startBtn").addEventListener("click", () => {
-  startThemeMusic();
-  show("step2");
-});
