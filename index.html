@@ -44,19 +44,10 @@
       position:relative;
     }
 
-    h1{
-      font-size:1.45rem;
-      margin:0 0 10px;
-      letter-spacing:.3px;
-    }
-
-    h2{
-      margin:10px 0 8px;
-      font-size:1.25rem;
-      letter-spacing:.2px;
-    }
-
+    h1{ font-size:1.45rem; margin:0 0 10px; letter-spacing:.3px; }
+    h2{ margin:10px 0 8px; font-size:1.25rem; letter-spacing:.2px; }
     p{ margin:0; line-height:1.65; }
+
     .muted{ color:var(--muted); }
     .spacer{ height:16px; }
 
@@ -127,7 +118,6 @@
       color:var(--muted);
     }
 
-    /* small, nice mute button */
     .muteBtn{
       position:absolute;
       top:14px;
@@ -139,13 +129,29 @@
       font-size:0.95rem;
     }
 
+    .choiceList{
+      margin-top:14px;
+      display:grid;
+      gap:10px;
+    }
+
+    .pill{
+      display:inline-block;
+      font-size:0.8rem;
+      color:var(--muted);
+      border:1px solid var(--border);
+      padding:6px 10px;
+      border-radius:999px;
+      margin-bottom:10px;
+    }
+
     .copyright{
-  margin-top:24px;
-  text-align:center;
-  font-size:0.8rem;
-  color:var(--muted);
-  opacity:0.8;
-}
+      margin-top:24px;
+      text-align:center;
+      font-size:0.8rem;
+      color:var(--muted);
+      opacity:0.8;
+    }
   </style>
 </head>
 
@@ -156,10 +162,10 @@
       <!-- Mute button -->
       <button id="muteBtn" class="btn muteBtn" type="button">🔊 Sound on</button>
 
-      <!-- Theme music player (must be inside the document) -->
+      <!-- Theme music player -->
       <audio id="themePlayer" preload="none"></audio>
 
-      <!-- STEP 1: WELCOME + START -->
+      <!-- STEP 1 -->
       <section id="step1">
         <h1>Hi, I’m Munchkin Boo 👋</h1>
         <p class="muted">I’m your personal bedtime story application.</p>
@@ -171,21 +177,19 @@
         <div class="status" id="audioStatus"></div>
       </section>
 
-      <!-- STEP 2: NAME -->
+      <!-- STEP 2 -->
       <section id="step2" class="hidden">
         <h1>What’s your name?</h1>
         <p class="muted">So I can personalise your story.</p>
         <div class="spacer"></div>
-
         <input id="nameInput" placeholder="Type your name…" autocomplete="given-name" />
-
         <div class="spacer"></div>
         <button class="btn primary" id="toMood" type="button">Continue</button>
         <div class="spacer"></div>
         <button class="btn" id="backToWelcome" type="button">Back</button>
       </section>
 
-      <!-- STEP 3: MOOD -->
+      <!-- STEP 3 -->
       <section id="step3" class="hidden">
         <h1>What mood are you in?</h1>
         <p class="muted">Choose one:</p>
@@ -198,7 +202,10 @@
 
         <div class="spacer"></div>
 
-        <button class="btn" data-mood="naughty" type="button">😈 Naughty</button>
+        <div class="row">
+          <button class="btn" data-mood="naughty" type="button">😈 Naughty</button>
+          <button class="btn" data-mood="adventure" type="button">🧭 Adventure</button>
+        </div>
 
         <div class="spacer"></div>
         <button class="btn" id="backToName" type="button">Back</button>
@@ -206,9 +213,14 @@
 
       <!-- STEP 4: STORY -->
       <section id="step4" class="hidden">
+        <div class="pill" id="modePill">Story</div>
         <img class="storyArt" id="storyArt" alt="" />
         <h2 id="storyTitle"></h2>
+
         <div class="storyBody" id="storyBody"></div>
+
+        <!-- Interactive choices (only shown for adventure mode) -->
+        <div class="choiceList hidden" id="choiceList"></div>
 
         <div class="topRow">
           <button class="btn primary" id="anotherStory" type="button">Another story</button>
@@ -218,10 +230,10 @@
         <div class="spacer"></div>
         <button class="btn" id="restart" type="button">Restart</button>
       </section>
-      
+
       <footer class="copyright">
-  © <span id="2022"></span> James Ritchie. All rights reserved.
-</footer>
+        © <span id="year"></span> James Ritchie. All rights reserved.
+      </footer>
 
     </div>
   </div>
@@ -234,7 +246,10 @@
       name: "",
       mood: "",
       stories: [],
-      lastStoryIdByMood: {}
+      lastStoryIdByMood: {},
+      // interactive story state:
+      currentInteractiveStory: null,
+      currentNodeId: null
     };
 
     const steps = ["step1","step2","step3","step4"];
@@ -267,21 +282,105 @@
       return picked;
     }
 
-    function renderStory(story){
-      const safeName = state.name || "Friend";
+    function setModePill(text){
+      document.getElementById("modePill").textContent = text;
+    }
 
+    function renderArtTitle(story){
       const art = document.getElementById("storyArt");
       art.onerror = () => console.log("Image failed to load:", art.src);
-      art.src = story.art;
-      art.alt = story.title;
+      art.src = story.art || "";
+      art.alt = story.title || "";
 
-      document.getElementById("storyTitle").textContent = story.title;
+      document.getElementById("storyTitle").textContent = story.title || "";
+    }
 
+    function renderParagraphs(paragraphArray){
+      const safeName = state.name || "Friend";
       const body = document.getElementById("storyBody");
-      body.innerHTML = (story.text || []).map(p => {
+      body.innerHTML = (paragraphArray || []).map(p => {
         const filled = String(p).replaceAll("{{name}}", safeName);
         return `<p>${filled}</p>`;
       }).join("");
+    }
+
+    // ======================
+    // Interactive (choose-your-own) rendering
+    // ======================
+    function startInteractiveStory(story){
+      state.currentInteractiveStory = story;
+      state.currentNodeId = story.start;
+
+      setModePill("Adventure");
+      document.getElementById("anotherStory").textContent = "Start over";
+      document.getElementById("choiceList").classList.remove("hidden");
+
+      renderArtTitle(story);
+      renderInteractiveNode();
+    }
+
+    function renderInteractiveNode(){
+      const story = state.currentInteractiveStory;
+      if (!story || !story.nodes) return;
+
+      const node = story.nodes[state.currentNodeId];
+      if (!node) return;
+
+      // text
+      renderParagraphs(node.text || []);
+
+      // choices
+      const choiceList = document.getElementById("choiceList");
+      choiceList.innerHTML = "";
+
+      const choices = node.choices || [];
+      if (choices.length === 0) {
+        // end node: hide choices
+        choiceList.classList.add("hidden");
+      } else {
+        choiceList.classList.remove("hidden");
+        choices.forEach(ch => {
+          const btn = document.createElement("button");
+          btn.className = "btn";
+          btn.type = "button";
+          btn.textContent = ch.label;
+          btn.addEventListener("click", () => {
+            state.currentNodeId = ch.next;
+            renderInteractiveNode();
+          });
+          choiceList.appendChild(btn);
+        });
+      }
+    }
+
+    function stopInteractiveStoryState(){
+      state.currentInteractiveStory = null;
+      state.currentNodeId = null;
+      document.getElementById("choiceList").classList.add("hidden");
+    }
+
+    // ======================
+    // Normal story rendering
+    // ======================
+    function renderNormalStory(story){
+      stopInteractiveStoryState();
+      setModePill("Story");
+      document.getElementById("anotherStory").textContent = "Another story";
+
+      renderArtTitle(story);
+      renderParagraphs(story.text || []);
+    }
+
+    function showNoStories(mood){
+      stopInteractiveStoryState();
+      setModePill("Story");
+      document.getElementById("anotherStory").textContent = "Another story";
+
+      document.getElementById("storyTitle").textContent = "No stories yet";
+      document.getElementById("storyBody").innerHTML =
+        `<p class="muted">No stories found for mood: ${mood}</p>`;
+      document.getElementById("storyArt").src = "";
+      document.getElementById("storyArt").alt = "";
     }
 
     async function loadStories(){
@@ -304,31 +403,29 @@
     const themePlayer = document.getElementById("themePlayer");
     const muteBtn = document.getElementById("muteBtn");
     const audioStatus = document.getElementById("audioStatus");
-    
-themePlayer.addEventListener("error", () => {
-  const code = themePlayer.error?.code;
-  const msg =
-    code === 1 ? "MEDIA_ERR_ABORTED" :
-    code === 2 ? "MEDIA_ERR_NETWORK" :
-    code === 3 ? "MEDIA_ERR_DECODE (format/codec)" :
-    code === 4 ? "MEDIA_ERR_SRC_NOT_SUPPORTED" :
-    "Unknown audio error";
-  console.log("Audio error:", msg, themePlayer.src);
-  audioStatus.textContent = "Audio error: " + msg;
-});
 
-themePlayer.addEventListener("playing", () => {
-  console.log("Audio playing ✅");
-  audioStatus.textContent = "";
-});
+    themePlayer.addEventListener("error", () => {
+      const code = themePlayer.error?.code;
+      const msg =
+        code === 1 ? "MEDIA_ERR_ABORTED" :
+        code === 2 ? "MEDIA_ERR_NETWORK" :
+        code === 3 ? "MEDIA_ERR_DECODE (format/codec)" :
+        code === 4 ? "MEDIA_ERR_SRC_NOT_SUPPORTED" :
+        "Unknown audio error";
+      console.log("Audio error:", msg, themePlayer.src);
+      audioStatus.textContent = "Audio error: " + msg;
+    });
 
-themePlayer.addEventListener("waiting", () => {
-  audioStatus.textContent = "Loading sound…";
-});
+    themePlayer.addEventListener("playing", () => {
+      audioStatus.textContent = "";
+    });
+
+    themePlayer.addEventListener("waiting", () => {
+      audioStatus.textContent = "Loading sound…";
+    });
 
     // restore mute preference
-    const savedMuted = localStorage.getItem("munchkin_muted") === "true";
-    themePlayer.muted = savedMuted;
+    themePlayer.muted = (localStorage.getItem("munchkin_muted") === "true");
 
     function updateMuteButton(){
       muteBtn.textContent = themePlayer.muted ? "🔇 Sound off" : "🔊 Sound on";
@@ -342,17 +439,19 @@ themePlayer.addEventListener("waiting", () => {
     });
 
     function startThemeMusic(){
-      // make sure this path matches your repo EXACTLY
+      themePlayer.pause();
       themePlayer.src = "assets/music/theme-music.mp3";
       themePlayer.loop = true;
       themePlayer.volume = 0.5;
+      themePlayer.load();
 
-      themePlayer.play()
-        .then(() => { audioStatus.textContent = ""; })
-        .catch((err) => {
+      const p = themePlayer.play();
+      if (p && typeof p.catch === "function") {
+        p.catch((err) => {
           console.log("Theme music blocked:", err);
-          audioStatus.textContent = "Tap Start again if sound doesn’t begin (browser policy).";
+          audioStatus.textContent = "If sound doesn’t begin, tap 🔊 then tap Start again.";
         });
+      }
     }
 
     function stopThemeMusic(){
@@ -364,7 +463,6 @@ themePlayer.addEventListener("waiting", () => {
     // Wire up UI
     // ======================
     document.getElementById("startBtn").addEventListener("click", () => {
-      // Start music on the same click gesture as Start (important!)
       startThemeMusic();
       show("step2");
     });
@@ -381,6 +479,7 @@ themePlayer.addEventListener("waiting", () => {
 
     document.getElementById("backToName").addEventListener("click", () => show("step2"));
 
+    // mood selection -> story/adventure
     document.getElementById("step3").addEventListener("click", (e) => {
       const btn = e.target.closest("[data-mood]");
       if(!btn) return;
@@ -389,22 +488,40 @@ themePlayer.addEventListener("waiting", () => {
       const story = pickStoryForMood(state.mood);
 
       if(!story){
-        document.getElementById("storyTitle").textContent = "No stories yet";
-        document.getElementById("storyBody").innerHTML =
-          `<p class="muted">No stories found for mood: ${state.mood}</p>`;
-        document.getElementById("storyArt").src = "";
-        document.getElementById("storyArt").alt = "";
+        showNoStories(state.mood);
         show("step4");
         return;
       }
 
-      renderStory(story);
+      // interactive story
+      if (story.type === "choose_your_own" && story.nodes && story.start) {
+        startInteractiveStory(story);
+        show("step4");
+        return;
+      }
+
+      // normal story
+      renderNormalStory(story);
       show("step4");
     });
 
+    // Another story / Start over (for adventure)
     document.getElementById("anotherStory").addEventListener("click", () => {
+      if (state.currentInteractiveStory) {
+        // start over the same adventure story
+        state.currentNodeId = state.currentInteractiveStory.start;
+        document.getElementById("choiceList").classList.remove("hidden");
+        renderInteractiveNode();
+        return;
+      }
       const story = pickStoryForMood(state.mood);
-      if (story) renderStory(story);
+      if (!story) return;
+
+      if (story.type === "choose_your_own" && story.nodes && story.start) {
+        startInteractiveStory(story);
+      } else {
+        renderNormalStory(story);
+      }
     });
 
     document.getElementById("changeMood").addEventListener("click", () => show("step3"));
@@ -412,6 +529,7 @@ themePlayer.addEventListener("waiting", () => {
     document.getElementById("restart").addEventListener("click", () => {
       state.name = "";
       state.mood = "";
+      stopInteractiveStoryState();
       document.getElementById("nameInput").value = "";
       stopThemeMusic();
       show("step1");
@@ -419,6 +537,9 @@ themePlayer.addEventListener("waiting", () => {
 
     // Remember name
     document.getElementById("nameInput").value = localStorage.getItem("munchkin_name") || "";
+
+    // Copyright year
+    document.getElementById("year").textContent = new Date().getFullYear();
 
     // Boot
     loadStories();
