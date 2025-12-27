@@ -292,6 +292,27 @@
     const themePlayer = document.getElementById("themePlayer");
     const muteBtn = document.getElementById("muteBtn");
     const audioStatus = document.getElementById("audioStatus");
+    
+themePlayer.addEventListener("error", () => {
+  const code = themePlayer.error?.code;
+  const msg =
+    code === 1 ? "MEDIA_ERR_ABORTED" :
+    code === 2 ? "MEDIA_ERR_NETWORK" :
+    code === 3 ? "MEDIA_ERR_DECODE (format/codec)" :
+    code === 4 ? "MEDIA_ERR_SRC_NOT_SUPPORTED" :
+    "Unknown audio error";
+  console.log("Audio error:", msg, themePlayer.src);
+  audioStatus.textContent = "Audio error: " + msg;
+});
+
+themePlayer.addEventListener("playing", () => {
+  console.log("Audio playing ✅");
+  audioStatus.textContent = "";
+});
+
+themePlayer.addEventListener("waiting", () => {
+  audioStatus.textContent = "Loading sound…";
+});
 
     // restore mute preference
     const savedMuted = localStorage.getItem("munchkin_muted") === "true";
