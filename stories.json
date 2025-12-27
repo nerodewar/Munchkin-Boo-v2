@@ -80,7 +80,7 @@
       "mood": "adventure",
       "title": "The Moon Lantern Adventure",
       "type": "choose_your_own",
-      "art": "assets/art/adventure-moon-lantern.png",
+      "art": "assets/art/moon-lantern.png",
       "start": "a1",
       "nodes": {
         "a1": {
