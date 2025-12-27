@@ -74,6 +74,99 @@
         "At the end, Munchkin Boo made a grand speech: “The treasure was never the buttons… it was the giggles.”",
         "{{name}} bowed deeply. “We are very naughty.” Munchkin Boo bowed back. “And very proud.”"
       ]
+    },
+{
+  "id": "adventure_moon_lantern",
+  "mood": "adventure",
+  "title": "The Moon Lantern Adventure",
+  "type": "choose_your_own",
+  "art": "assets/art/adventure-moon-lantern.png",
+  "start": "a1",
+  "nodes": {
+    "a1": {
+      "text": [
+        "Tonight feels different.",
+        "{{name}} notices a soft silver glow drifting outside the window.",
+        "Munchkin Boo whispers, “That looks like a moon lantern… they only appear when someone is ready for a gentle adventure.”"
+      ],
+      "choices": [
+        { "label": "Follow the glow", "next": "a2" },
+        { "label": "Peek from the window", "next": "a3" }
+      ]
+    },
+
+    "a2": {
+      "text": [
+        "{{name}} steps quietly outside, the lantern floating just ahead like it knows the way.",
+        "The air feels calm and warm, like a deep bedtime breath."
+      ],
+      "choices": [
+        { "label": "Walk toward the trees", "next": "a4" },
+        { "label": "Sit and listen", "next": "a5" }
+      ]
+    },
+
+    "a3": {
+      "text": [
+        "From the window, {{name}} watches the lantern bob gently.",
+        "It flickers once, as if inviting someone brave and cozy."
+      ],
+      "choices": [
+        { "label": "Open the window", "next": "a2" },
+        { "label": "Wave goodnight", "next": "a6" }
+      ]
+    },
+
+    "a4": {
+      "text": [
+        "Between the trees, fireflies blink like tiny stars.",
+        "Munchkin Boo smiles. “The forest is saying hello.”"
+      ],
+      "choices": [
+        { "label": "Follow the fireflies", "next": "a7" },
+        { "label": "Rest on a soft log", "next": "a5" }
+      ]
+    },
+
+    "a5": {
+      "text": [
+        "{{name}} sits still.",
+        "The lantern lowers, glowing softly.",
+        "Everything feels peaceful and slow."
+      ],
+      "choices": [
+        { "label": "Close your eyes", "next": "a8" }
+      ]
+    },
+
+    "a6": {
+      "text": [
+        "{{name}} waves gently.",
+        "The lantern glows brighter, then floats up toward the moon.",
+        "It feels like a promise for another night."
+      ],
+      "choices": [
+        { "label": "Snuggle into bed", "next": "a8" }
+      ]
+    },
+
+    "a7": {
+      "text": [
+        "The fireflies swirl into a tiny glowing path.",
+        "{{name}} follows it, feeling light and safe."
+      ],
+      "choices": [
+        { "label": "Lie beneath the stars", "next": "a8" }
+      ]
+    },
+
+    "a8": {
+      "text": [
+        "The lantern drifts higher, fading into moonlight.",
+        "Munchkin Boo whispers, “Adventure complete.”",
+        "{{name}} feels cozy, calm, and ready for sleep."
+      ],
+      "choices": []
     }
-  ]
+  }
 }
