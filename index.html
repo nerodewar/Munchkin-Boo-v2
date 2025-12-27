@@ -1,3 +1,28 @@
+const themePlayer = document.getElementById("themePlayer");
+
+function startThemeMusic() {
+  // Set only when starting (so it doesn’t preload)
+  themePlayer.src = "assets/music/theme-tune.mp3";
+  themePlayer.loop = true;
+  themePlayer.volume = 0.5; // adjust to taste (0.0 - 1.0)
+
+  themePlayer.play().catch(() => {
+    // Rare, but if something blocks play, you can show a small “Tap to enable sound” button later
+    console.log("Theme music blocked by browser (autoplay policy).");
+  });
+}
+
+function stopThemeMusic() {
+  themePlayer.pause();
+  themePlayer.currentTime = 0;
+}
+
+document.getElementById("startBtn").addEventListener("click", () => {
+  startThemeMusic();
+  show("step2");
+});
+
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -132,7 +157,9 @@
 <body>
   <div class="wrap">
     <div class="card">
-
+      
+ <button id="muteBtn" class="btn">🔊 Sound on</button>
+      
       <!-- STEP 1: WELCOME + START -->
       <section id="step1">
         <h1>Hi, I’m Munchkin Boo 👋</h1>
@@ -332,3 +359,8 @@
   </script>
 </body>
 </html>
+
+<audio id="themePlayer" preload="none"></audio>
+
+muteBtn.textContent = themePlayer.muted ? "🔕" : "🔔";
+
