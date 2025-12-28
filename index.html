@@ -140,34 +140,27 @@
       opacity:0.85;
     }
 
-    /* ✅ Centered controls “in the middle atop the UI” */
+    /* ✅ Top-right icon controls */
     .uiTopBar{
+      position:absolute;
+      top:14px;
+      right:14px;
       display:flex;
       gap:10px;
       align-items:center;
-      justify-content:center;   /* ✅ centered */
-      margin-bottom:14px;
-      flex-wrap:wrap;
+      justify-content:flex-end;
+      margin:0;
+      flex-wrap:nowrap;
+      z-index:5;
     }
     .uiTopBar .btn{
       width:auto;
       padding:10px 12px;
       border-radius:14px;
       font-weight:900;
-      font-size:0.95rem;
+      font-size:1.05rem;
       white-space:nowrap;
-    }
-
-    @media (max-width: 420px){
-      .uiTopBar{
-        display:grid;
-        grid-template-columns:1fr;
-        gap:10px;
-      }
-      .uiTopBar .btn{
-        width:100%;
-        border-radius:16px;
-      }
+      min-width:44px; /* ✅ keeps icon buttons tappable */
     }
 
     .choiceList{
@@ -226,10 +219,10 @@
   <div class="wrap">
     <div class="card">
 
-      <!-- ✅ Top-of-UI controls (centered) -->
+      <!-- ✅ Top-right icon-only controls -->
       <div class="uiTopBar">
-        <button id="trackBtn" class="btn" type="button">🎵 Theme</button>
-        <button id="muteBtn" class="btn" type="button">🔊 Sound on</button>
+        <button id="trackBtn" class="btn" type="button" aria-label="Change music track">🎵</button>
+        <button id="muteBtn" class="btn" type="button" aria-label="Toggle sound">🔊</button>
       </div>
 
       <audio id="themePlayer" preload="none"></audio>
@@ -532,19 +525,15 @@
 
     themePlayer.muted = (localStorage.getItem("munchkin_muted") === "true");
 
+    // ✅ Icon-only mute button
     function updateMuteButton(){
-      muteBtn.textContent = themePlayer.muted ? "🔇 Sound off" : "🔊 Sound on";
+      muteBtn.textContent = themePlayer.muted ? "🔇" : "🔊";
     }
     updateMuteButton();
 
-    function trackLabel(key){
-      return key === "theme" ? "🎵 Theme"
-           : key === "shooting" ? "🌠 Shooting Stars"
-           : "💜 Labour of Love";
-    }
-
+    // ✅ Icon-only track button (never shows names)
     function updateTrackButton(){
-      trackBtn.textContent = trackLabel(state.track);
+      trackBtn.textContent = "🎵";
     }
     updateTrackButton();
 
