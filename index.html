@@ -17,6 +17,10 @@
       --button:#121C46;
       --buttonHover:#18235C;
       --radius:20px;
+
+      /* ✅ Audio tracks stored in CSS (read by JS) */
+      --track-theme: url("assets/music/theme-music.mp3");
+      --track-shooting: url("assets/music/shooting-stars.mp3");
     }
 
     *{ box-sizing:border-box; }
@@ -137,22 +141,36 @@
       opacity:0.85;
     }
 
-    .muteBtn{
+    /* ✅ Two small top buttons */
+    .topControls{
       position:absolute;
       top:14px;
       right:14px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .muteBtn,
+    .trackBtn{
       width:auto;
       padding:10px 12px;
       border-radius:14px;
       font-weight:900;
       font-size:0.95rem;
+      white-space:nowrap;
     }
 
     @media (max-width: 420px){
-      .muteBtn{
+      .topControls{
         position: static;
         width: 100%;
         margin-bottom: 12px;
+        display:grid;
+        grid-template-columns: 1fr;
+        gap:10px;
+      }
+      .muteBtn, .trackBtn{
+        width: 100%;
         border-radius: 16px;
       }
     }
@@ -220,7 +238,12 @@
   <div class="wrap">
     <div class="card">
 
-      <button id="muteBtn" class="btn muteBtn" type="button">🔊 Sound on</button>
+      <!-- ✅ Top buttons -->
+      <div class="topControls">
+        <button id="trackBtn" class="btn trackBtn" type="button">🎵 Theme</button>
+        <button id="muteBtn" class="btn muteBtn" type="button">🔊 Sound on</button>
+      </div>
+
       <audio id="themePlayer" preload="none"></audio>
 
       <section id="step1">
@@ -301,7 +324,10 @@
       stories: [],
       lastStoryIdByMood: {},
       currentInteractiveStory: null,
-      currentNodeId: null
+      currentNodeId: null,
+
+      // ✅ audio track
+      track: localStorage.getItem("munchkin_track") || "theme" // "theme" | "shooting"
     };
 
     const steps = ["step1","step2","step3","step4"];
@@ -380,7 +406,6 @@
       if (!el) { renderFn(); return; }
 
       el.classList.add("isFading");
-
       window.setTimeout(() => {
         renderFn();
         requestAnimationFrame(() => el.classList.remove("isFading"));
@@ -437,7 +462,6 @@
       else fadeUpdate(doRender);
     }
 
-    // ✅ FIX: clear choices + hide them when leaving adventure mode
     function stopInteractiveStoryState(){
       state.currentInteractiveStory = null;
       state.currentNodeId = null;
@@ -486,11 +510,29 @@
     }
 
     // ======================
-    // Audio: Theme + Mute toggle
+    // ✅ Audio: Track toggle + Mute
     // ======================
     const themePlayer = document.getElementById("themePlayer");
     const muteBtn = document.getElementById("muteBtn");
+    const trackBtn = document.getElementById("trackBtn");
     const audioStatus = document.getElementById("audioStatus");
+
+    // Read CSS variables (they come back like: url("..."))
+    function readCssAudioUrl(varName){
+      const raw = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+      // strip: url("...") / url('...') / url(...)
+      return raw.replace(/^url\((['"]?)(.*?)\1\)$/i, "$2");
+    }
+
+    const TRACKS = {
+      theme: readCssAudioUrl("--track-theme"),
+      shooting: readCssAudioUrl("--track-shooting")
+    };
+
+    function updateTrackButton(){
+      trackBtn.textContent = (state.track === "theme") ? "🎵 Theme" : "🌠 Shooting Stars";
+    }
+    updateTrackButton();
 
     themePlayer.addEventListener("error", () => {
       const code = themePlayer.error?.code;
@@ -520,17 +562,44 @@
       updateMuteButton();
     });
 
-    function startThemeMusic(){
+    function setTrack(trackKey, {autoplayIfPlaying=true} = {}){
+      const wasPlaying = !themePlayer.paused && themePlayer.currentTime > 0;
+
+      state.track = trackKey;
+      localStorage.setItem("munchkin_track", state.track);
+      updateTrackButton();
+
+      // Swap audio source
       themePlayer.pause();
-      themePlayer.src = "assets/music/theme-music.mp3";
+      themePlayer.src = TRACKS[trackKey] || TRACKS.theme;
       themePlayer.loop = true;
       themePlayer.volume = 0.5;
       themePlayer.load();
 
+      // Only try to autoplay if user already started audio
+      if (autoplayIfPlaying && wasPlaying) {
+        const p = themePlayer.play();
+        if (p && typeof p.catch === "function") {
+          p.catch(() => {
+            audioStatus.textContent = "Tap Start again to resume sound.";
+          });
+        }
+      }
+    }
+
+    trackBtn.addEventListener("click", () => {
+      const next = (state.track === "theme") ? "shooting" : "theme";
+      setTrack(next);
+    });
+
+    function startThemeMusic(){
+      // Ensure correct starting track
+      setTrack(state.track, {autoplayIfPlaying:false});
+
       const p = themePlayer.play();
       if (p && typeof p.catch === "function") {
         p.catch((err) => {
-          console.log("Theme music blocked:", err);
+          console.log("Audio blocked:", err);
           audioStatus.textContent = "If sound doesn’t begin, tap 🔊 then tap Start again.";
         });
       }
