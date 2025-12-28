@@ -19,8 +19,9 @@
       --radius:20px;
 
       /* ✅ Audio tracks stored in CSS (read by JS) */
-      --track-theme: url("assets/music/theme-music.mp3");
-      --track-shooting: url("assets/music/shooting-stars.mp3");
+      --track-theme:   url("assets/music/theme-music.mp3");
+      --track-shooting:url("assets/music/shooting-stars.mp3");
+      --track-labour:  url("assets/music/labour-of-love.wav");
     }
 
     *{ box-sizing:border-box; }
@@ -139,13 +140,14 @@
       opacity:0.85;
     }
 
-    /* ✅ Controls “atop the UI” (inside card, above steps) */
+    /* ✅ Centered controls “in the middle atop the UI” */
     .uiTopBar{
       display:flex;
       gap:10px;
       align-items:center;
-      justify-content:flex-start;
+      justify-content:center;   /* ✅ centered */
       margin-bottom:14px;
+      flex-wrap:wrap;
     }
     .uiTopBar .btn{
       width:auto;
@@ -224,7 +226,7 @@
   <div class="wrap">
     <div class="card">
 
-      <!-- ✅ Top-of-UI controls -->
+      <!-- ✅ Top-of-UI controls (centered) -->
       <div class="uiTopBar">
         <button id="trackBtn" class="btn" type="button">🎵 Theme</button>
         <button id="muteBtn" class="btn" type="button">🔊 Sound on</button>
@@ -312,13 +314,12 @@
       currentNodeId: null,
 
       // audio
-      track: localStorage.getItem("munchkin_track") || "theme", // "theme" | "shooting"
+      track: localStorage.getItem("munchkin_track") || "theme", // "theme" | "shooting" | "labour"
       audioStarted: localStorage.getItem("munchkin_audio_started") === "true"
     };
 
     const steps = ["step1","step2","step3","step4"];
 
-    // if we leave step4, clear any leftover adventure choices
     function show(id){
       steps.forEach(s => document.getElementById(s).classList.toggle("hidden", s !== id));
       if (id !== "step4") {
@@ -494,23 +495,25 @@
     }
 
     // ======================
-    // AUDIO (fixed)
+    // AUDIO (3 tracks)
     // ======================
     const themePlayer = document.getElementById("themePlayer");
     const muteBtn = document.getElementById("muteBtn");
     const trackBtn = document.getElementById("trackBtn");
     const audioStatus = document.getElementById("audioStatus");
 
-    // Read CSS variables (returned like: url("..."))
     function readCssAudioUrl(varName){
       const raw = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
       return raw.replace(/^url\((['"]?)(.*?)\1\)$/i, "$2");
     }
 
     const TRACKS = {
-      theme: readCssAudioUrl("--track-theme") || "assets/music/theme-music.mp3",
-      shooting: readCssAudioUrl("--track-shooting") || "assets/music/shooting-stars.mp3"
+      theme:    readCssAudioUrl("--track-theme")   || "assets/music/theme-music.mp3",
+      shooting: readCssAudioUrl("--track-shooting")|| "assets/music/shooting-stars.mp3",
+      labour:   readCssAudioUrl("--track-labour")  || "assets/music/labour-of-love.wav"
     };
+
+    const TRACK_ORDER = ["theme", "shooting", "labour"];
 
     themePlayer.addEventListener("error", () => {
       const code = themePlayer.error?.code;
@@ -527,7 +530,6 @@
     themePlayer.addEventListener("playing", () => { audioStatus.textContent = ""; });
     themePlayer.addEventListener("waiting", () => { audioStatus.textContent = "Loading sound…"; });
 
-    // restore mute preference
     themePlayer.muted = (localStorage.getItem("munchkin_muted") === "true");
 
     function updateMuteButton(){
@@ -535,8 +537,14 @@
     }
     updateMuteButton();
 
+    function trackLabel(key){
+      return key === "theme" ? "🎵 Theme"
+           : key === "shooting" ? "🌠 Shooting Stars"
+           : "💜 Labour of Love";
+    }
+
     function updateTrackButton(){
-      trackBtn.textContent = (state.track === "theme") ? "🎵 Theme" : "🌠 Shooting Stars";
+      trackBtn.textContent = trackLabel(state.track);
     }
     updateTrackButton();
 
@@ -547,12 +555,13 @@
     });
 
     function applyTrack(trackKey){
+      if (!TRACKS[trackKey]) trackKey = "theme";
       state.track = trackKey;
       localStorage.setItem("munchkin_track", state.track);
       updateTrackButton();
 
       themePlayer.pause();
-      themePlayer.src = TRACKS[trackKey] || TRACKS.theme;
+      themePlayer.src = TRACKS[trackKey];
       themePlayer.loop = true;
       themePlayer.volume = 0.5;
       themePlayer.load();
@@ -570,18 +579,18 @@
       }
     }
 
-    // ✅ Toggle track: ALWAYS attempt to play (toggle click is a user gesture)
-    trackBtn.addEventListener("click", async () => {
-      const next = (state.track === "theme") ? "shooting" : "theme";
-      applyTrack(next);
+    function nextTrackKey(current){
+      const i = TRACK_ORDER.indexOf(current);
+      return TRACK_ORDER[(i + 1) % TRACK_ORDER.length];
+    }
 
-      // If user has ever started audio (or is starting now), try play
-      if (state.audioStarted) {
-        await tryPlay();
-      }
+    // ✅ Cycle through 3 tracks, and attempt play (click is user gesture)
+    trackBtn.addEventListener("click", async () => {
+      const next = nextTrackKey(state.track);
+      applyTrack(next);
+      if (state.audioStarted) await tryPlay();
     });
 
-    // Start music on Start click (best autoplay compliance)
     async function startThemeMusic(){
       applyTrack(state.track);
       await tryPlay();
