@@ -262,7 +262,6 @@
         <img class="storyArt" id="storyArt" alt="" />
         <h2 id="storyTitle"></h2>
 
-        <!-- Fade wrapper: body + choices fade between nodes -->
         <div class="fadeWrap" id="fadeWrap">
           <div class="storyBody" id="storyBody"></div>
           <div class="choiceList hidden" id="choiceList"></div>
@@ -306,8 +305,16 @@
     };
 
     const steps = ["step1","step2","step3","step4"];
+
+    // ✅ FIX: if we leave step4, force-hide and clear any leftover adventure choices
     function show(id){
       steps.forEach(s => document.getElementById(s).classList.toggle("hidden", s !== id));
+
+      if (id !== "step4") {
+        const choiceList = document.getElementById("choiceList");
+        choiceList.classList.add("hidden");
+        choiceList.innerHTML = "";
+      }
     }
 
     function cleanName(input){
@@ -335,7 +342,6 @@
       return picked;
     }
 
-    // pick a DIFFERENT adventure story (Moon Lantern <-> River Lights)
     function pickAnotherAdventureStory(){
       const adventures = state.stories.filter(s =>
         s.mood === "adventure" && s.type === "choose_your_own" && s.nodes && s.start
@@ -369,7 +375,6 @@
       }).join("");
     }
 
-    // ---- Fade helper ----
     function fadeUpdate(renderFn){
       const el = document.getElementById("fadeWrap");
       if (!el) { renderFn(); return; }
@@ -382,22 +387,20 @@
       }, 260);
     }
 
-    // ======================
-    // Interactive (choose-your-own) rendering
-    // ======================
     function startInteractiveStory(story){
       state.currentInteractiveStory = story;
       state.currentNodeId = story.start;
 
       setModePill("Adventure");
       document.getElementById("anotherStory").textContent = "Another adventure";
-      document.getElementById("choiceList").classList.remove("hidden");
+
+      const choiceList = document.getElementById("choiceList");
+      choiceList.classList.remove("hidden");
 
       renderArtTitle(story);
       fadeUpdate(() => renderInteractiveNode(true));
     }
 
-    // pass skipFade=true when we already wrapped it in fadeUpdate
     function renderInteractiveNode(skipFade=false){
       const story = state.currentInteractiveStory;
       if (!story || !story.nodes) return;
@@ -423,7 +426,7 @@
             btn.textContent = ch.label;
             btn.addEventListener("click", () => {
               state.currentNodeId = ch.next;
-              renderInteractiveNode(); // will fade by default
+              renderInteractiveNode();
             });
             choiceList.appendChild(btn);
           });
@@ -434,15 +437,16 @@
       else fadeUpdate(doRender);
     }
 
+    // ✅ FIX: clear choices + hide them when leaving adventure mode
     function stopInteractiveStoryState(){
       state.currentInteractiveStory = null;
       state.currentNodeId = null;
-      document.getElementById("choiceList").classList.add("hidden");
+
+      const choiceList = document.getElementById("choiceList");
+      choiceList.classList.add("hidden");
+      choiceList.innerHTML = "";
     }
 
-    // ======================
-    // Normal story rendering
-    // ======================
     function renderNormalStory(story){
       stopInteractiveStoryState();
       setModePill("Story");
@@ -461,8 +465,8 @@
       fadeUpdate(() => {
         document.getElementById("storyBody").innerHTML =
           `<p class="muted">No stories found for mood: ${mood}</p>`;
-        document.getElementById("choiceList").classList.add("hidden");
       });
+
       document.getElementById("storyArt").src = "";
       document.getElementById("storyArt").alt = "";
     }
@@ -580,7 +584,6 @@
       show("step4");
     });
 
-    // Another story / Another adventure
     document.getElementById("anotherStory").addEventListener("click", () => {
       if (state.mood === "adventure") {
         const nextAdventure = pickAnotherAdventureStory();
