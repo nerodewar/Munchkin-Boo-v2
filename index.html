@@ -111,6 +111,18 @@
     .storyBody p{ margin:0 0 12px; }
     .storyBody p:last-child{ margin-bottom:0; }
 
+    /* ----- Soft fade transitions ----- */
+    .fadeWrap{
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 260ms ease, transform 260ms ease;
+      will-change: opacity, transform;
+    }
+    .fadeWrap.isFading{
+      opacity: 0;
+      transform: translateY(4px);
+    }
+
     .topRow{
       display:flex;
       gap:10px;
@@ -176,7 +188,6 @@
       gap:8px;
     }
 
-    /* FIXED: removed extra stray brace that was breaking CSS */
     .supportBtn{
       max-width:240px;
       padding:10px 14px;
@@ -251,8 +262,11 @@
         <img class="storyArt" id="storyArt" alt="" />
         <h2 id="storyTitle"></h2>
 
-        <div class="storyBody" id="storyBody"></div>
-        <div class="choiceList hidden" id="choiceList"></div>
+        <!-- Fade wrapper: body + choices fade between nodes -->
+        <div class="fadeWrap" id="fadeWrap">
+          <div class="storyBody" id="storyBody"></div>
+          <div class="choiceList hidden" id="choiceList"></div>
+        </div>
 
         <div class="topRow">
           <button class="btn primary" id="anotherStory" type="button">Another story</button>
@@ -321,7 +335,7 @@
       return picked;
     }
 
-    // NEW: pick a DIFFERENT adventure story (Moon Lantern <-> River Lights)
+    // pick a DIFFERENT adventure story (Moon Lantern <-> River Lights)
     function pickAnotherAdventureStory(){
       const adventures = state.stories.filter(s =>
         s.mood === "adventure" && s.type === "choose_your_own" && s.nodes && s.start
@@ -355,6 +369,22 @@
       }).join("");
     }
 
+    // ---- Fade helper ----
+    function fadeUpdate(renderFn){
+      const el = document.getElementById("fadeWrap");
+      if (!el) { renderFn(); return; }
+
+      el.classList.add("isFading");
+
+      window.setTimeout(() => {
+        renderFn();
+        requestAnimationFrame(() => el.classList.remove("isFading"));
+      }, 260);
+    }
+
+    // ======================
+    // Interactive (choose-your-own) rendering
+    // ======================
     function startInteractiveStory(story){
       state.currentInteractiveStory = story;
       state.currentNodeId = story.start;
@@ -364,38 +394,44 @@
       document.getElementById("choiceList").classList.remove("hidden");
 
       renderArtTitle(story);
-      renderInteractiveNode();
+      fadeUpdate(() => renderInteractiveNode(true));
     }
 
-    function renderInteractiveNode(){
+    // pass skipFade=true when we already wrapped it in fadeUpdate
+    function renderInteractiveNode(skipFade=false){
       const story = state.currentInteractiveStory;
       if (!story || !story.nodes) return;
 
       const node = story.nodes[state.currentNodeId];
       if (!node) return;
 
-      renderParagraphs(node.text || []);
+      const doRender = () => {
+        renderParagraphs(node.text || []);
 
-      const choiceList = document.getElementById("choiceList");
-      choiceList.innerHTML = "";
+        const choiceList = document.getElementById("choiceList");
+        choiceList.innerHTML = "";
 
-      const choices = node.choices || [];
-      if (choices.length === 0) {
-        choiceList.classList.add("hidden");
-      } else {
-        choiceList.classList.remove("hidden");
-        choices.forEach(ch => {
-          const btn = document.createElement("button");
-          btn.className = "btn";
-          btn.type = "button";
-          btn.textContent = ch.label;
-          btn.addEventListener("click", () => {
-            state.currentNodeId = ch.next;
-            renderInteractiveNode();
+        const choices = node.choices || [];
+        if (choices.length === 0) {
+          choiceList.classList.add("hidden");
+        } else {
+          choiceList.classList.remove("hidden");
+          choices.forEach(ch => {
+            const btn = document.createElement("button");
+            btn.className = "btn";
+            btn.type = "button";
+            btn.textContent = ch.label;
+            btn.addEventListener("click", () => {
+              state.currentNodeId = ch.next;
+              renderInteractiveNode(); // will fade by default
+            });
+            choiceList.appendChild(btn);
           });
-          choiceList.appendChild(btn);
-        });
-      }
+        }
+      };
+
+      if (skipFade) doRender();
+      else fadeUpdate(doRender);
     }
 
     function stopInteractiveStoryState(){
@@ -404,12 +440,16 @@
       document.getElementById("choiceList").classList.add("hidden");
     }
 
+    // ======================
+    // Normal story rendering
+    // ======================
     function renderNormalStory(story){
       stopInteractiveStoryState();
       setModePill("Story");
       document.getElementById("anotherStory").textContent = "Another story";
+
       renderArtTitle(story);
-      renderParagraphs(story.text || []);
+      fadeUpdate(() => renderParagraphs(story.text || []));
     }
 
     function showNoStories(mood){
@@ -418,8 +458,11 @@
       document.getElementById("anotherStory").textContent = "Another story";
 
       document.getElementById("storyTitle").textContent = "No stories yet";
-      document.getElementById("storyBody").innerHTML =
-        `<p class="muted">No stories found for mood: ${mood}</p>`;
+      fadeUpdate(() => {
+        document.getElementById("storyBody").innerHTML =
+          `<p class="muted">No stories found for mood: ${mood}</p>`;
+        document.getElementById("choiceList").classList.add("hidden");
+      });
       document.getElementById("storyArt").src = "";
       document.getElementById("storyArt").alt = "";
     }
@@ -438,6 +481,9 @@
       }
     }
 
+    // ======================
+    // Audio: Theme + Mute toggle
+    // ======================
     const themePlayer = document.getElementById("themePlayer");
     const muteBtn = document.getElementById("muteBtn");
     const audioStatus = document.getElementById("audioStatus");
@@ -491,6 +537,9 @@
       themePlayer.currentTime = 0;
     }
 
+    // ======================
+    // Wire up UI
+    // ======================
     document.getElementById("startBtn").addEventListener("click", () => {
       startThemeMusic();
       show("step2");
@@ -531,7 +580,7 @@
       show("step4");
     });
 
-    // UPDATED: if in adventure mode, "Another adventure" loads the other adventure story
+    // Another story / Another adventure
     document.getElementById("anotherStory").addEventListener("click", () => {
       if (state.mood === "adventure") {
         const nextAdventure = pickAnotherAdventureStory();
