@@ -162,6 +162,112 @@
           "choices": []
         }
       }
+    },
+    {
+      "id": "adventure_river_lights",
+      "mood": "adventure",
+      "title": "The River of Quiet Lights",
+      "type": "choose_your_own",
+      "art": "assets/art/adventure-river-lights.png",
+      "start": "b1",
+      "nodes": {
+        "b1": {
+          "text": [
+            "The night is very still.",
+            "{{name}} notices a soft shimmer moving through the grass, like tiny stars floating on water.",
+            "Munchkin Boo whispers, “That’s the River of Quiet Lights… it only appears when the world is ready to slow down.”"
+          ],
+          "choices": [
+            { "label": "Follow the shimmer", "next": "b2" },
+            { "label": "Sit and watch", "next": "b3" }
+          ]
+        },
+        "b2": {
+          "text": [
+            "{{name}} walks gently beside the glowing river.",
+            "Each step feels calm, like walking through a deep breath."
+          ],
+          "choices": [
+            { "label": "Listen to the water", "next": "b4" },
+            { "label": "Touch the light", "next": "b5" }
+          ]
+        },
+        "b3": {
+          "text": [
+            "{{name}} sits quietly.",
+            "The lights drift past, slow and steady, as if they are in no hurry at all."
+          ],
+          "choices": [
+            { "label": "Close your eyes", "next": "b6" },
+            { "label": "Stand up slowly", "next": "b2" }
+          ]
+        },
+        "b4": {
+          "text": [
+            "The river makes a soft humming sound.",
+            "Munchkin Boo smiles. “That’s the sound of the day settling down.”"
+          ],
+          "choices": [
+            { "label": "Hum along", "next": "b7" },
+            { "label": "Lie on the grass", "next": "b6" }
+          ]
+        },
+        "b5": {
+          "text": [
+            "{{name}} reaches out.",
+            "The light feels warm, like holding a tiny moon."
+          ],
+          "choices": [
+            { "label": "Let it float away", "next": "b7" },
+            { "label": "Hold it close", "next": "b8" }
+          ]
+        },
+        "b6": {
+          "text": [
+            "{{name}} rests.",
+            "The ground feels soft and safe.",
+            "Everything slows."
+          ],
+          "choices": [
+            { "label": "Breathe deeply", "next": "b9" }
+          ]
+        },
+        "b7": {
+          "text": [
+            "The lights begin to drift upward, one by one.",
+            "The river grows quieter, like it’s whispering goodnight."
+          ],
+          "choices": [
+            { "label": "Watch the sky", "next": "b9" }
+          ]
+        },
+        "b8": {
+          "text": [
+            "{{name}} holds the gentle glow.",
+            "It slowly fades, leaving behind a warm, peaceful feeling."
+          ],
+          "choices": [
+            { "label": "Smile softly", "next": "b9" }
+          ]
+        },
+        "b9": {
+          "text": [
+            "The River of Quiet Lights becomes still.",
+            "Munchkin Boo whispers, “The night has everything it needs now.”"
+          ],
+          "choices": [
+            { "label": "Snuggle into sleep", "next": "b10" }
+          ]
+        },
+        "b10": {
+          "text": [
+            "The last light fades into the stars.",
+            "{{name}} feels calm, safe, and warm.",
+            "{{name}} smiles and drifts off into a gentle slumber…"
+          ],
+          "choices": []
+        }
+      }
     }
   ]
 }
