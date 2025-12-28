@@ -44,17 +44,13 @@
       position:relative;
     }
 
-    /* ---------- Typography & spacing polish ---------- */
     p{ margin:0; line-height:1.7; }
     .muted{ color:var(--muted); line-height:1.6; }
-
-    /* Give every element inside a step some breathing room */
     .card > section > * + * { margin-top:14px; }
 
     h1{ font-size:1.45rem; margin:0; letter-spacing:.3px; }
     h2{ margin:0; font-size:1.25rem; letter-spacing:.2px; }
 
-    /* Keep spacer available, but smaller (less bunched/stacky) */
     .spacer{ height:12px; }
 
     .btn{
@@ -68,7 +64,7 @@
       font-size:1rem;
       cursor:pointer;
       transition:background .15s ease, transform .05s ease;
-      text-decoration:none; /* so <a class="btn"> looks like a button */
+      text-decoration:none;
       display:inline-flex;
       align-items:center;
       justify-content:center;
@@ -122,7 +118,6 @@
     }
     .topRow .btn{ flex:1; }
 
-    /* Status line: smaller, calmer */
     .status{
       margin-top:10px;
       font-size:0.85rem;
@@ -141,15 +136,14 @@
       font-size:0.95rem;
     }
 
-    /* Prevent overlap on small phones */
-@media (max-width: 420px){
-  .muteBtn{
-    position: static;      /* no longer absolute */
-    width: 100%;
-    margin-bottom: 12px;   /* gives it space above the title */
-    border-radius: 16px;
-  }
-}
+    @media (max-width: 420px){
+      .muteBtn{
+        position: static;
+        width: 100%;
+        margin-bottom: 12px;
+        border-radius: 16px;
+      }
+    }
 
     .choiceList{
       margin-top:14px;
@@ -167,7 +161,6 @@
       margin-bottom:10px;
     }
 
-    /* ---------- Support section polish ---------- */
     .supportDivider{
       height:1px;
       background:var(--border);
@@ -183,19 +176,17 @@
       gap:8px;
     }
 
-    /* Make it smaller + clearly "optional" vs Start button */
+    /* FIXED: removed extra stray brace that was breaking CSS */
     .supportBtn{
-  max-width:240px;
-  padding:10px 14px;
-  font-size:0.70rem;
-  font-weight:620;
-  background:#141E4A;
-  border:1px solid rgba(255,255,255,0.08);
-  opacity:0.5;
-}
-.supportBtn:hover{ opacity:1; }
+      max-width:240px;
+      padding:10px 14px;
+      font-size:0.70rem;
+      font-weight:620;
+      background:#141E4A;
+      border:1px solid rgba(255,255,255,0.08);
+      opacity:0.5;
     }
-    .supportBtn:hover{ background:#233070; }
+    .supportBtn:hover{ opacity:1; }
 
     .supportNote{
       text-align:center;
@@ -204,7 +195,6 @@
       opacity:0.85;
     }
 
-    /* Footer even softer */
     .copyright{
       margin-top:20px;
       text-align:center;
@@ -219,13 +209,9 @@
   <div class="wrap">
     <div class="card">
 
-      <!-- Mute button -->
       <button id="muteBtn" class="btn muteBtn" type="button">🔊 Sound on</button>
-
-      <!-- Theme music player -->
       <audio id="themePlayer" preload="none"></audio>
 
-      <!-- STEP 1 -->
       <section id="step1">
         <h1>Hi, I’m Munchkin Boo ✨🌙</h1>
         <p class="muted">I’m your personal bedtime story application.</p>
@@ -235,7 +221,6 @@
         <div class="status" id="audioStatus"></div>
       </section>
 
-      <!-- STEP 2 -->
       <section id="step2" class="hidden">
         <h1>What’s your name?</h1>
         <p class="muted">So I can personalise your story.</p>
@@ -244,7 +229,6 @@
         <button class="btn" id="backToWelcome" type="button">Back</button>
       </section>
 
-      <!-- STEP 3 -->
       <section id="step3" class="hidden">
         <h1>What mood are you in?</h1>
         <p class="muted">Choose one:</p>
@@ -262,15 +246,12 @@
         <button class="btn" id="backToName" type="button">Back</button>
       </section>
 
-      <!-- STEP 4: STORY -->
       <section id="step4" class="hidden">
         <div class="pill" id="modePill">Story</div>
         <img class="storyArt" id="storyArt" alt="" />
         <h2 id="storyTitle"></h2>
 
         <div class="storyBody" id="storyBody"></div>
-
-        <!-- Interactive choices (only shown for adventure mode) -->
         <div class="choiceList hidden" id="choiceList"></div>
 
         <div class="topRow">
@@ -281,10 +262,8 @@
         <button class="btn" id="restart" type="button">Restart</button>
       </section>
 
-      <!-- Subtle divider to separate "app" from "support" -->
       <div class="supportDivider"></div>
 
-      <!-- Support (centered + smaller) -->
       <div class="supportWrap">
         <a href="https://buy.stripe.com/bJe28k6ISbeB59yaK5frW00"
            target="_blank"
@@ -292,10 +271,7 @@
            class="btn supportBtn">
           Please support Munchkin Boo...
         </a>
-
-        <p class="muted supportNote">
-          
-        </p>
+        <p class="muted supportNote"></p>
       </div>
 
       <footer class="copyright">
@@ -306,15 +282,11 @@
   </div>
 
   <script>
-    // ======================
-    // State
-    // ======================
     const state = {
       name: "",
       mood: "",
       stories: [],
       lastStoryIdByMood: {},
-      // interactive story state:
       currentInteractiveStory: null,
       currentNodeId: null
     };
@@ -349,6 +321,19 @@
       return picked;
     }
 
+    // NEW: pick a DIFFERENT adventure story (Moon Lantern <-> River Lights)
+    function pickAnotherAdventureStory(){
+      const adventures = state.stories.filter(s =>
+        s.mood === "adventure" && s.type === "choose_your_own" && s.nodes && s.start
+      );
+      if (!adventures.length) return null;
+      if (adventures.length === 1) return adventures[0];
+
+      const currentId = state.currentInteractiveStory?.id || null;
+      const options = adventures.filter(s => s.id !== currentId);
+      return options.length ? pickRandom(options) : adventures[0];
+    }
+
     function setModePill(text){
       document.getElementById("modePill").textContent = text;
     }
@@ -358,7 +343,6 @@
       art.onerror = () => console.log("Image failed to load:", art.src);
       art.src = story.art || "";
       art.alt = story.title || "";
-
       document.getElementById("storyTitle").textContent = story.title || "";
     }
 
@@ -371,15 +355,12 @@
       }).join("");
     }
 
-    // ======================
-    // Interactive (choose-your-own) rendering
-    // ======================
     function startInteractiveStory(story){
       state.currentInteractiveStory = story;
       state.currentNodeId = story.start;
 
       setModePill("Adventure");
-      document.getElementById("anotherStory").textContent = "Start over";
+      document.getElementById("anotherStory").textContent = "Another adventure";
       document.getElementById("choiceList").classList.remove("hidden");
 
       renderArtTitle(story);
@@ -423,14 +404,10 @@
       document.getElementById("choiceList").classList.add("hidden");
     }
 
-    // ======================
-    // Normal story rendering
-    // ======================
     function renderNormalStory(story){
       stopInteractiveStoryState();
       setModePill("Story");
       document.getElementById("anotherStory").textContent = "Another story";
-
       renderArtTitle(story);
       renderParagraphs(story.text || []);
     }
@@ -461,9 +438,6 @@
       }
     }
 
-    // ======================
-    // Audio: Theme + Mute toggle
-    // ======================
     const themePlayer = document.getElementById("themePlayer");
     const muteBtn = document.getElementById("muteBtn");
     const audioStatus = document.getElementById("audioStatus");
@@ -480,13 +454,8 @@
       audioStatus.textContent = "Audio error: " + msg;
     });
 
-    themePlayer.addEventListener("playing", () => {
-      audioStatus.textContent = "";
-    });
-
-    themePlayer.addEventListener("waiting", () => {
-      audioStatus.textContent = "Loading sound…";
-    });
+    themePlayer.addEventListener("playing", () => { audioStatus.textContent = ""; });
+    themePlayer.addEventListener("waiting", () => { audioStatus.textContent = "Loading sound…"; });
 
     themePlayer.muted = (localStorage.getItem("munchkin_muted") === "true");
 
@@ -522,15 +491,14 @@
       themePlayer.currentTime = 0;
     }
 
-    // ======================
-    // Wire up UI
-    // ======================
     document.getElementById("startBtn").addEventListener("click", () => {
       startThemeMusic();
       show("step2");
     });
 
     document.getElementById("backToWelcome").addEventListener("click", () => show("step1"));
+    document.getElementById("backToName").addEventListener("click", () => show("step2"));
+    document.getElementById("changeMood").addEventListener("click", () => show("step3"));
 
     document.getElementById("toMood").addEventListener("click", () => {
       const nm = cleanName(document.getElementById("nameInput").value);
@@ -539,8 +507,6 @@
       localStorage.setItem("munchkin_name", nm);
       show("step3");
     });
-
-    document.getElementById("backToName").addEventListener("click", () => show("step2"));
 
     document.getElementById("step3").addEventListener("click", (e) => {
       const btn = e.target.closest("[data-mood]");
@@ -565,11 +531,11 @@
       show("step4");
     });
 
+    // UPDATED: if in adventure mode, "Another adventure" loads the other adventure story
     document.getElementById("anotherStory").addEventListener("click", () => {
-      if (state.currentInteractiveStory) {
-        state.currentNodeId = state.currentInteractiveStory.start;
-        document.getElementById("choiceList").classList.remove("hidden");
-        renderInteractiveNode();
+      if (state.mood === "adventure") {
+        const nextAdventure = pickAnotherAdventureStory();
+        if (nextAdventure) startInteractiveStory(nextAdventure);
         return;
       }
 
@@ -583,8 +549,6 @@
       }
     });
 
-    document.getElementById("changeMood").addEventListener("click", () => show("step3"));
-
     document.getElementById("restart").addEventListener("click", () => {
       state.name = "";
       state.mood = "";
@@ -595,11 +559,8 @@
     });
 
     document.getElementById("nameInput").value = localStorage.getItem("munchkin_name") || "";
-
-    // Copyright year
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    // Boot
     loadStories();
     show("step1");
   </script>
