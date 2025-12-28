@@ -55,8 +55,6 @@
     h1{ font-size:1.45rem; margin:0; letter-spacing:.3px; }
     h2{ margin:0; font-size:1.25rem; letter-spacing:.2px; }
 
-    .spacer{ height:12px; }
-
     .btn{
       width:100%;
       padding:14px 16px;
@@ -141,17 +139,15 @@
       opacity:0.85;
     }
 
-    /* ✅ Two small top buttons */
-    .topControls{
-      position:absolute;
-      top:14px;
-      right:14px;
+    /* ✅ Controls “atop the UI” (inside card, above steps) */
+    .uiTopBar{
       display:flex;
       gap:10px;
       align-items:center;
+      justify-content:flex-start;
+      margin-bottom:14px;
     }
-    .muteBtn,
-    .trackBtn{
+    .uiTopBar .btn{
       width:auto;
       padding:10px 12px;
       border-radius:14px;
@@ -161,17 +157,14 @@
     }
 
     @media (max-width: 420px){
-      .topControls{
-        position: static;
-        width: 100%;
-        margin-bottom: 12px;
+      .uiTopBar{
         display:grid;
-        grid-template-columns: 1fr;
+        grid-template-columns:1fr;
         gap:10px;
       }
-      .muteBtn, .trackBtn{
-        width: 100%;
-        border-radius: 16px;
+      .uiTopBar .btn{
+        width:100%;
+        border-radius:16px;
       }
     }
 
@@ -217,13 +210,6 @@
     }
     .supportBtn:hover{ opacity:1; }
 
-    .supportNote{
-      text-align:center;
-      font-size:0.8rem;
-      max-width:320px;
-      opacity:0.85;
-    }
-
     .copyright{
       margin-top:20px;
       text-align:center;
@@ -238,10 +224,10 @@
   <div class="wrap">
     <div class="card">
 
-      <!-- ✅ Top buttons -->
-      <div class="topControls">
-        <button id="trackBtn" class="btn trackBtn" type="button">🎵 Theme</button>
-        <button id="muteBtn" class="btn muteBtn" type="button">🔊 Sound on</button>
+      <!-- ✅ Top-of-UI controls -->
+      <div class="uiTopBar">
+        <button id="trackBtn" class="btn" type="button">🎵 Theme</button>
+        <button id="muteBtn" class="btn" type="button">🔊 Sound on</button>
       </div>
 
       <audio id="themePlayer" preload="none"></audio>
@@ -307,7 +293,6 @@
            class="btn supportBtn">
           Please support Munchkin Boo...
         </a>
-        <p class="muted supportNote"></p>
       </div>
 
       <footer class="copyright">
@@ -326,16 +311,16 @@
       currentInteractiveStory: null,
       currentNodeId: null,
 
-      // ✅ audio track
-      track: localStorage.getItem("munchkin_track") || "theme" // "theme" | "shooting"
+      // audio
+      track: localStorage.getItem("munchkin_track") || "theme", // "theme" | "shooting"
+      audioStarted: localStorage.getItem("munchkin_audio_started") === "true"
     };
 
     const steps = ["step1","step2","step3","step4"];
 
-    // ✅ FIX: if we leave step4, force-hide and clear any leftover adventure choices
+    // if we leave step4, clear any leftover adventure choices
     function show(id){
       steps.forEach(s => document.getElementById(s).classList.toggle("hidden", s !== id));
-
       if (id !== "step4") {
         const choiceList = document.getElementById("choiceList");
         choiceList.classList.add("hidden");
@@ -404,7 +389,6 @@
     function fadeUpdate(renderFn){
       const el = document.getElementById("fadeWrap");
       if (!el) { renderFn(); return; }
-
       el.classList.add("isFading");
       window.setTimeout(() => {
         renderFn();
@@ -510,29 +494,23 @@
     }
 
     // ======================
-    // ✅ Audio: Track toggle + Mute
+    // AUDIO (fixed)
     // ======================
     const themePlayer = document.getElementById("themePlayer");
     const muteBtn = document.getElementById("muteBtn");
     const trackBtn = document.getElementById("trackBtn");
     const audioStatus = document.getElementById("audioStatus");
 
-    // Read CSS variables (they come back like: url("..."))
+    // Read CSS variables (returned like: url("..."))
     function readCssAudioUrl(varName){
       const raw = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
-      // strip: url("...") / url('...') / url(...)
       return raw.replace(/^url\((['"]?)(.*?)\1\)$/i, "$2");
     }
 
     const TRACKS = {
-      theme: readCssAudioUrl("--track-theme"),
-      shooting: readCssAudioUrl("--track-shooting")
+      theme: readCssAudioUrl("--track-theme") || "assets/music/theme-music.mp3",
+      shooting: readCssAudioUrl("--track-shooting") || "assets/music/shooting-stars.mp3"
     };
-
-    function updateTrackButton(){
-      trackBtn.textContent = (state.track === "theme") ? "🎵 Theme" : "🌠 Shooting Stars";
-    }
-    updateTrackButton();
 
     themePlayer.addEventListener("error", () => {
       const code = themePlayer.error?.code;
@@ -549,6 +527,7 @@
     themePlayer.addEventListener("playing", () => { audioStatus.textContent = ""; });
     themePlayer.addEventListener("waiting", () => { audioStatus.textContent = "Loading sound…"; });
 
+    // restore mute preference
     themePlayer.muted = (localStorage.getItem("munchkin_muted") === "true");
 
     function updateMuteButton(){
@@ -556,53 +535,56 @@
     }
     updateMuteButton();
 
+    function updateTrackButton(){
+      trackBtn.textContent = (state.track === "theme") ? "🎵 Theme" : "🌠 Shooting Stars";
+    }
+    updateTrackButton();
+
     muteBtn.addEventListener("click", () => {
       themePlayer.muted = !themePlayer.muted;
       localStorage.setItem("munchkin_muted", themePlayer.muted);
       updateMuteButton();
     });
 
-    function setTrack(trackKey, {autoplayIfPlaying=true} = {}){
-      const wasPlaying = !themePlayer.paused && themePlayer.currentTime > 0;
-
+    function applyTrack(trackKey){
       state.track = trackKey;
       localStorage.setItem("munchkin_track", state.track);
       updateTrackButton();
 
-      // Swap audio source
       themePlayer.pause();
       themePlayer.src = TRACKS[trackKey] || TRACKS.theme;
       themePlayer.loop = true;
       themePlayer.volume = 0.5;
       themePlayer.load();
+    }
 
-      // Only try to autoplay if user already started audio
-      if (autoplayIfPlaying && wasPlaying) {
-        const p = themePlayer.play();
-        if (p && typeof p.catch === "function") {
-          p.catch(() => {
-            audioStatus.textContent = "Tap Start again to resume sound.";
-          });
-        }
+    async function tryPlay(){
+      try {
+        await themePlayer.play();
+        audioStatus.textContent = "";
+        state.audioStarted = true;
+        localStorage.setItem("munchkin_audio_started", "true");
+      } catch (err) {
+        console.log("Audio blocked:", err);
+        audioStatus.textContent = "If sound doesn’t begin, tap Sound on, then tap Start again.";
       }
     }
 
-    trackBtn.addEventListener("click", () => {
+    // ✅ Toggle track: ALWAYS attempt to play (toggle click is a user gesture)
+    trackBtn.addEventListener("click", async () => {
       const next = (state.track === "theme") ? "shooting" : "theme";
-      setTrack(next);
+      applyTrack(next);
+
+      // If user has ever started audio (or is starting now), try play
+      if (state.audioStarted) {
+        await tryPlay();
+      }
     });
 
-    function startThemeMusic(){
-      // Ensure correct starting track
-      setTrack(state.track, {autoplayIfPlaying:false});
-
-      const p = themePlayer.play();
-      if (p && typeof p.catch === "function") {
-        p.catch((err) => {
-          console.log("Audio blocked:", err);
-          audioStatus.textContent = "If sound doesn’t begin, tap 🔊 then tap Start again.";
-        });
-      }
+    // Start music on Start click (best autoplay compliance)
+    async function startThemeMusic(){
+      applyTrack(state.track);
+      await tryPlay();
     }
 
     function stopThemeMusic(){
@@ -611,7 +593,7 @@
     }
 
     // ======================
-    // Wire up UI
+    // UI wiring
     // ======================
     document.getElementById("startBtn").addEventListener("click", () => {
       startThemeMusic();
