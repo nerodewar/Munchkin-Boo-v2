@@ -141,18 +141,6 @@
       font-size:0.95rem;
     }
 
-    button>
-
-/* Prevent overlap on small phones */
-@media (max-width: 420px){
-  .muteBtn{
-    position: static;      /* no longer absolute */
-    width: 100%;
-    margin-bottom: 12px;   /* gives it space above the title */
-    border-radius: 16px;
-  }
-}
-
     .choiceList{
       margin-top:14px;
       display:grid;
@@ -222,8 +210,8 @@
     <div class="card">
 
       <!-- Mute button -->
-      <button id="muteBtn" class="btn muteBtn" type="button">🔊 Sound on</
-      
+      <button id="muteBtn" class="btn muteBtn" type="button">🔊 Sound on</button>
+
       <!-- Theme music player -->
       <audio id="themePlayer" preload="none"></audio>
 
