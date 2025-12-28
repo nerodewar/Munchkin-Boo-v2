@@ -163,6 +163,30 @@
       min-width:44px; /* ✅ keeps icon buttons tappable */
     }
 
+    /* ✅ Reserve space so the top-right audio buttons never overlap content */
+.card{
+  padding-top: 70px; /* default space for the icon bar */
+}
+
+/* Keep buttons tucked in tight */
+.uiTopBar{
+  top: 12px;
+  right: 12px;
+}
+
+/* ✅ On smaller screens, reserve a bit more space and slightly shrink buttons */
+@media (max-width: 420px){
+  .card{
+    padding-top: 84px; /* more space for the icon bar */
+  }
+
+  .uiTopBar .btn{
+    padding: 8px 10px;
+    font-size: 1rem;
+    min-width: 40px;
+  }
+}
+
     .choiceList{
       margin-top:14px;
       display:grid;
