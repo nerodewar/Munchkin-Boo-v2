@@ -141,6 +141,16 @@
       font-size:0.95rem;
     }
 
+    /* Prevent overlap on small phones */
+@media (max-width: 420px){
+  .muteBtn{
+    position: static;      /* no longer absolute */
+    width: 100%;
+    margin-bottom: 12px;   /* gives it space above the title */
+    border-radius: 16px;
+  }
+}
+
     .choiceList{
       margin-top:14px;
       display:grid;
