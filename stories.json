@@ -25,7 +25,7 @@
   "id": "the-very-sleepy-caterpillar",
   "mood": "sleepy",
   "title": "The Very Sleepy Caterpillar",
-  "art": "assets/art/sleepy-caterpillar.jpeg",
+  "art": "assets/art/sleepy-caterpillar.png",
   "text": [
     "On a quiet leaf beneath the stars, a very sleepy caterpillar curled up and sighed.",
     "{{name}} found the caterpillar while the evening was settling in. The sky had turned soft and dark, and the air felt slow and gentle, like it was ready for rest.",
@@ -43,7 +43,7 @@
   "id": "the-yawning-moon",
   "mood": "sleepy",
   "title": "The Yawning Moon",
-  "art": "assets/art/yawning-moon.jpeg",
+  "art": "assets/art/yawning-moon.png",
   "text": [
     "High above the quiet world, the moon stretched and yawned.",
     "{{name}} noticed it right away. The moon wasn’t bright and busy tonight — it looked soft and drowsy, glowing gently as if it had been awake for a very long time.",
