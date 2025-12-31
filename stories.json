@@ -23,38 +23,95 @@
     },
     {
   "id": "the-very-sleepy-caterpillar",
+  "mood": "sleepy",
   "title": "The Very Sleepy Caterpillar",
-  "mood": "Sleepy",
-  "wordCount": 300,
   "art": "assets/art/sleepy-caterpillar.jpeg",
-  "story": "On a quiet leaf beneath the stars, a very sleepy caterpillar curled up and sighed.\n\n{{name}} found the caterpillar while the evening was settling in. The sky had turned soft and dark, and the air felt slow and gentle, like it was ready for rest.\n\nThe caterpillar moved carefully along the leaf, stretching and yawning as it went. It had spent the whole day nibbling and exploring, and now its tiny body felt heavy with tiredness.\n\n{{name}} sat nearby, watching as the caterpillar paused and looked up at the moon. The moon glowed kindly, shining just enough light to make everything feel safe. The caterpillar gave a tiny yawn, copying the moon, and smiled.\n\nSlowly, the caterpillar began to spin a silky cocoon. Each wrap was calm and unhurried. There was no rush. Night had plenty of time.\n\n{{name}} noticed how peaceful it looked, working gently and then resting, working gently and then resting again. It felt like a reminder that it was okay to slow down.\n\nOnce the cocoon was finished, the caterpillar snuggled inside. It felt warm and protected, like being wrapped in the softest blanket.\n\n{{name}} closed their eyes for a moment, breathing slowly. The world felt quiet and kind.\n\nAs sleep arrived, the caterpillar drifted off, dreaming of tomorrow — but not worrying about it. Tonight was only for rest.\n\nAnd with that calm thought, {{name}} let sleep gently take over too."
+  "text": [
+    "On a quiet leaf beneath the stars, a very sleepy caterpillar curled up and sighed.",
+    "{{name}} found the caterpillar while the evening was settling in. The sky had turned soft and dark, and the air felt slow and gentle, like it was ready for rest.",
+    "The caterpillar moved carefully along the leaf, stretching and yawning as it went. It had spent the whole day nibbling and exploring, and now its tiny body felt heavy with tiredness.",
+    "{{name}} sat nearby, watching as the caterpillar paused and looked up at the moon. The moon glowed kindly, shining just enough light to make everything feel safe. The caterpillar gave a tiny yawn, copying the moon, and smiled.",
+    "Slowly, the caterpillar began to spin a silky cocoon. Each wrap was calm and unhurried. There was no rush. Night had plenty of time.",
+    "{{name}} noticed how peaceful it looked, working gently and then resting, working gently and then resting again. It felt like a reminder that it was okay to slow down.",
+    "Once the cocoon was finished, the caterpillar snuggled inside. It felt warm and protected, like being wrapped in the softest blanket.",
+    "{{name}} closed their eyes for a moment, breathing slowly. The world felt quiet and kind.",
+    "As sleep arrived, the caterpillar drifted off, dreaming of tomorrow — but not worrying about it. Tonight was only for rest.",
+    "And with that calm thought, {{name}} let sleep gently take over too."
       ]
     },
     {
   "id": "the-yawning-moon",
+  "mood": "sleepy",
   "title": "The Yawning Moon",
-  "mood": "Sleepy",
-  "wordCount": 300,
   "art": "assets/art/yawning-moon.jpeg",
-  "story": "High above the quiet world, the moon stretched and yawned.\n\n{{name}} noticed it right away. The moon wasn’t bright and busy tonight — it looked soft and drowsy, glowing gently as if it had been awake for a very long time.\n\nDown below, everything seemed to follow the moon’s lead. The trees slowed their swaying. The rooftops rested under the silver light. Even the air felt calmer, like it was settling in for the night.\n\n{{name}} watched from the window as the moon opened its mouth in a slow, glowing yawn. It didn’t rush. It didn’t try to hide it. The yawn drifted down through the sky and wrapped around the world like a quiet invitation to rest.\n\nFeeling sleepy, {{name}} climbed into bed. The blanket felt just right — warm, familiar, and comforting. Each breath grew softer, matching the rhythm of the moon above.\n\nOutside, the stars blinked slowly, one by one, as if they were getting tired too. The moon smiled gently, its glow dimming just enough to be soothing. It stayed watchful, but relaxed, happy to keep the night safe.\n\n{{name}} let their eyes close. Thoughts floated away like clouds passing in front of the moon. Nothing needed attention now. Nothing needed fixing.\n\nAs sleep arrived, the moon gave one final, quiet yawn — a promise to stay until morning.\n\nAnd under its gentle light, {{name}} drifted peacefully into dreams, held by the calm of the night."
+  "text": [
+    "High above the quiet world, the moon stretched and yawned.",
+    "{{name}} noticed it right away. The moon wasn’t bright and busy tonight — it looked soft and drowsy, glowing gently as if it had been awake for a very long time.",
+    "Down below, everything seemed to follow the moon’s lead. The trees slowed their swaying. The rooftops rested under the silver light. Even the air felt calmer, like it was settling in for the night.",
+    "{{name}} watched from the window as the moon opened its mouth in a slow, glowing yawn. It didn’t rush. It didn’t try to hide it. The yawn drifted down through the sky and wrapped around the world like a quiet invitation to rest.",
+    "Feeling sleepy, {{name}} climbed into bed. The blanket felt just right — warm, familiar, and comforting. Each breath grew softer, matching the rhythm of the moon above.",
+    "Outside, the stars blinked slowly, one by one, as if they were getting tired too. The moon smiled gently, its glow dimming just enough to be soothing. It stayed watchful, but relaxed, happy to keep the night safe.",
+    "{{name}} let their eyes close. Thoughts floated away like clouds passing in front of the moon. Nothing needed attention now. Nothing needed fixing.",
+    "As sleep arrived, the moon gave one final, quiet yawn — a promise to stay until morning.",
+    "And under its gentle light, {{name}} drifted peacefully into dreams, held by the calm of the night."
       ]
     },
     {
   "id": "the-birthday-cake-fiasco",
+  "mood": "hungry",
   "title": "The Birthday Cake Fiasco",
-  "mood": "Hungry",
-  "wordCount": 300,
   "art": "assets/art/birthday-cake-fiasco.png",
-  "story": "It began with a gasp.\n\n“The cake!” {{name}} exclaimed.\n\nThere were twenty minutes until the birthday celebration, and the cake was… still just an idea.\n\nA very important idea.\n\nThe kitchen sprang into action. A cupboard was opened too fast. A bowl wobbled. A recipe was read upside down.\n\n“Oh no,” {{name}} laughed. “This might be a fiasco.”\n\nFlour dusted the counter like unexpected snow. Someone grabbed sugar when they meant salt. The spoon went missing, reappeared, and then vanished again, clearly enjoying the drama.\n\nThe oven beeped impatiently.\n\n“This is fine,” {{name}} said bravely, even as things became messier.\n\nBatter splashed. The cake pan tilted. A tiny trail of frosting appeared where frosting absolutely did not belong.\n\nAnd then — laughter.\n\nBig, unstoppable laughter.\n\nThe Birthday Cake Fiasco had officially arrived.\n\nBut something wonderful happened inside the chaos.\n\nEveryone helped. The mistakes turned into jokes. The kitchen filled with warmth instead of worry.\n\nAt last, the cake went into the oven — slightly lopsided, undeniably hopeful.\n\nWhen it came out, it wasn’t perfect.\n\nIt was better.\n\nIt was real.\n\nLater, as the lights dimmed and the excitement settled, {{name}} felt cozy and content.\n\nSome of the best memories come from moments that almost go wrong.\n\nAnd as the day gently ended, the fiasco turned into a story worth keeping — one that carried {{name}} softly into a peaceful, happy sleep."
+  "text": [
+    "It began with a gasp.",
+    "“The cake!” {{name}} exclaimed.",
+    "There were twenty minutes until the birthday celebration, and the cake was… still just an idea.",
+    "A very important idea.",
+    "The kitchen sprang into action. A cupboard was opened too fast. A bowl wobbled. A recipe was read upside down.",
+    "“Oh no,” {{name}} laughed. “This might be a fiasco.”",
+    "Flour dusted the counter like unexpected snow. Someone grabbed sugar when they meant salt. The spoon went missing, reappeared, and then vanished again, clearly enjoying the drama.",
+    "The oven beeped impatiently.",
+    "“This is fine,” {{name}} said bravely, even as things became messier.",
+    "Batter splashed. The cake pan tilted. A tiny trail of frosting appeared where frosting absolutely did not belong.",
+    "And then — laughter.",
+    "Big, unstoppable laughter.",
+    "The Birthday Cake Fiasco had officially arrived.",
+    "But something wonderful happened inside the chaos.",
+    "Everyone helped. The mistakes turned into jokes. The kitchen filled with warmth instead of worry.",
+    "At last, the cake went into the oven — slightly lopsided, undeniably hopeful.",
+    "When it came out, it wasn’t perfect.",
+    "It was better.",
+    "It was real.",
+    "Later, as the lights dimmed and the excitement settled, {{name}} felt cozy and content.",
+    "Some of the best memories come from moments that almost go wrong.",
+    "And as the day gently ended, the fiasco turned into a story worth keeping — one that carried {{name}} softly into a peaceful, happy sleep."
       ]
     },
     {
   "id": "shenanigans-in-the-freezer",
+  "mood": "hungry",
   "title": "Shenanigans in the Freezer",
-  "mood": "Hungry",
-  "wordCount": 300,
   "art": "assets/art/freezer.png",
-  "story": "The freezer door opened with a dramatic creeeak.\n\n“Oh,” {{name}} whispered. “This looks suspicious.”\n\nInside the freezer was a mysterious world of frosty shapes and forgotten treasures. Boxes leaned at funny angles. Something sparkled. Something else slid just a little when no one was looking.\n\n{{name}} reached in carefully.\n\nSuddenly — shffft! — a small avalanche of chilly surprises shifted.\n\n“Oh no,” {{name}} laughed. “Shenanigans.”\n\nA frosty bag scooted forward. A box hid behind another box as if playing a game. Even the freezer light flickered, clearly enjoying the moment.\n\n“This is getting out of hand,” {{name}} said, smiling.\n\nThe freezer, however, did not agree.\n\nSomething gently bumped the door. Something else made a soft thud. Nothing was actually wrong — it was just one of those silly moments where everything decided to be a little mischievous at once.\n\n{{name}} paused, took a breath, and laughed again.\n\nInstead of rushing, {{name}} slowed down.\n\nOne thing at a time.\n\nThe freezer calmed. The boxes settled. Order returned, though not without a final tiny slide — just to keep things interesting.\n\nAt last, the door closed.\n\n“Well,” {{name}} said, “that was an adventure.”\n\nLater, as the evening grew quieter and the house softened into night, the memory of freezer shenanigans felt warm and funny.\n\nSome moments don’t need fixing.\n\nThey just need a smile.\n\nAnd with that gentle thought, {{name}} drifted into a peaceful sleep, carrying the silliness of the day into kind, happy dreams."
+  "text": [
+    "The freezer door opened with a dramatic creeeak.",
+    "“Oh,” {{name}} whispered. “This looks suspicious.”",
+    "Inside the freezer was a mysterious world of frosty shapes and forgotten treasures. Boxes leaned at funny angles. Something sparkled. Something else slid just a little when no one was looking.",
+    "{{name}} reached in carefully.",
+    "Suddenly — shffft! — a small avalanche of chilly surprises shifted.",
+    "“Oh no,” {{name}} laughed. “Shenanigans.”",
+    "A frosty bag scooted forward. A box hid behind another box as if playing a game. Even the freezer light flickered, clearly enjoying the moment.",
+    "“This is getting out of hand,” {{name}} said, smiling.",
+    "The freezer, however, did not agree.",
+    "Something gently bumped the door. Something else made a soft thud. Nothing was actually wrong — it was just one of those silly moments where everything decided to be a little mischievous at once.",
+    "{{name}} paused, took a breath, and laughed again.",
+    "Instead of rushing, {{name}} slowed down.",
+    "One thing at a time.",
+    "The freezer calmed. The boxes settled. Order returned, though not without a final tiny slide — just to keep things interesting.",
+    "At last, the door closed.",
+    "“Well,” {{name}} said, “that was an adventure.”",
+    "Later, as the evening grew quieter and the house softened into night, the memory of freezer shenanigans felt warm and funny.",
+    "Some moments don’t need fixing.",
+    "They just need a smile.",
+    "And with that gentle thought, {{name}} drifted into a peaceful sleep, carrying the silliness of the day into kind, happy dreams."
       ]
     },
     {
