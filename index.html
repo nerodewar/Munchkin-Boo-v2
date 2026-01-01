@@ -91,18 +91,7 @@
       box-shadow:0 6px 16px rgba(0,0,0,.28);
       filter:brightness(1.02);
     }
-
-    /* subtle "shine sweep" */
-    .btn::after{
-      content:"";
-      position:absolute;
-      inset:-40% -60%;
-      background:linear-gradient(120deg, transparent 40%, rgba(255,255,255,.16), transparent 60%);
-      transform:translateX(-40%);
-      opacity:0;
-      transition:opacity .18s ease, transform .42s ease;
-      pointer-events:none;
-    }
+    
     .btn:hover::after{
       opacity:1;
       transform:translateX(40%);
