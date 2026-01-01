@@ -40,6 +40,11 @@
 
     .wrap{ width:min(520px,100%); }
 
+    /* ✅ Allow a wider “book” on larger screens */
+    @media (min-width: 768px){
+      .wrap{ width:min(980px, 100%); }
+    }
+
     .card{
       background:var(--card);
       border:1px solid var(--border);
@@ -101,16 +106,6 @@
 
     .hidden{ display:none; }
 
-    .storyArt{
-      width:100%;
-      aspect-ratio:1/1;
-      object-fit:cover;
-      border-radius:16px;
-      display:block;
-      border:1px solid var(--border);
-      margin:0 auto 14px;
-    }
-
     .storyBody p{ margin:0 0 12px; }
     .storyBody p:last-child{ margin-bottom:0; }
 
@@ -164,28 +159,28 @@
     }
 
     /* ✅ Reserve space so the top-right audio buttons never overlap content */
-.card{
-  padding-top: 70px; /* default space for the icon bar */
-}
+    .card{
+      padding-top: 70px; /* default space for the icon bar */
+    }
 
-/* Keep buttons tucked in tight */
-.uiTopBar{
-  top: 12px;
-  right: 12px;
-}
+    /* Keep buttons tucked in tight */
+    .uiTopBar{
+      top: 12px;
+      right: 12px;
+    }
 
-/* ✅ On smaller screens, reserve a bit more space and slightly shrink buttons */
-@media (max-width: 420px){
-  .card{
-    padding-top: 84px; /* more space for the icon bar */
-  }
+    /* ✅ On smaller screens, reserve a bit more space and slightly shrink buttons */
+    @media (max-width: 420px){
+      .card{
+        padding-top: 84px; /* more space for the icon bar */
+      }
 
-  .uiTopBar .btn{
-    padding: 8px 10px;
-    font-size: 1rem;
-    min-width: 40px;
-  }
-}
+      .uiTopBar .btn{
+        padding: 8px 10px;
+        font-size: 1rem;
+        min-width: 40px;
+      }
+    }
 
     .choiceList{
       margin-top:14px;
@@ -235,6 +230,84 @@
       font-size:0.7rem;
       color:var(--muted);
       opacity:0.6;
+    }
+
+    /* =========================
+       📖 Open-book Story Layout
+       ========================= */
+
+    /* The story "page" wrapper */
+    .storyLayout{
+      display:flex;
+      flex-direction:column; /* mobile default */
+      gap:16px;
+    }
+
+    /* Left "page" (image) */
+    .storyLeft{
+      flex:1;
+    }
+
+    /* Right "page" (text) */
+    .storyRight{
+      flex:1;
+      min-width:0;
+    }
+
+    /* Art */
+    .storyArt{
+      width:100%;
+      aspect-ratio: 4 / 3;   /* a bit more book-like than 1/1 */
+      object-fit:cover;
+      border-radius:16px;
+      display:block;
+      border:1px solid var(--border);
+      margin:0;
+    }
+
+    /* The text area becomes the scrollable panel on larger screens */
+    .storyScroll{
+      overflow:visible;  /* mobile: normal flow */
+    }
+
+    /* ✅ Larger devices: “open book” */
+    @media (min-width: 768px){
+      /* give the card a more book-like footprint */
+      .card{
+        padding-left: 28px;
+        padding-right: 28px;
+      }
+
+      .storyLayout{
+        flex-direction:row;
+        align-items:stretch;
+        gap:22px;
+      }
+
+      .storyLeft{
+        width:48%;
+      }
+
+      .storyRight{
+        width:52%;
+        display:flex;
+        flex-direction:column;
+        min-height:520px; /* makes it feel like a book page */
+      }
+
+      /* make the image feel big & “page-like” */
+      .storyArt{
+        aspect-ratio: 3 / 4;  /* portrait-ish for a page */
+        height: 520px;
+        max-height: 520px;
+      }
+
+      /* scroll only the story text/choices */
+      .storyScroll{
+        flex:1;
+        overflow:auto;
+        padding-right:10px; /* space for scrollbar */
+      }
     }
   </style>
 </head>
@@ -289,12 +362,25 @@
 
       <section id="step4" class="hidden">
         <div class="pill" id="modePill">Story</div>
-        <img class="storyArt" id="storyArt" alt="" />
-        <h2 id="storyTitle"></h2>
 
-        <div class="fadeWrap" id="fadeWrap">
-          <div class="storyBody" id="storyBody"></div>
-          <div class="choiceList hidden" id="choiceList"></div>
+        <!-- 📖 Book layout wrapper -->
+        <div class="storyLayout">
+          <!-- Left page: art -->
+          <div class="storyLeft">
+            <img class="storyArt" id="storyArt" alt="" />
+          </div>
+
+          <!-- Right page: title + scrollable story -->
+          <div class="storyRight">
+            <h2 id="storyTitle"></h2>
+
+            <div class="storyScroll">
+              <div class="fadeWrap" id="fadeWrap">
+                <div class="storyBody" id="storyBody"></div>
+                <div class="choiceList hidden" id="choiceList"></div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="topRow">
