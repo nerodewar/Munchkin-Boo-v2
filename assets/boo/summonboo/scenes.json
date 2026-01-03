@@ -70,7 +70,7 @@
 
     "glow_2": {
       "lines": [
-        "In… nice and gentle…\n\nOut… slow and soft…"
+        "In… nice and slowly…\n\nAnd out…"
       ],
       "choices": [
         { "label": "Again", "goto": "glow_3" },
@@ -161,7 +161,7 @@
 
     "return_to_story": {
       "lines": [
-        "Okay.\n\nBack to the story… nice and gentle 👻"
+        "Okay.\n\nBack to the story… 👻"
       ],
       "choices": [
         { "label": "Continue", "goto": "END_RETURN" }
