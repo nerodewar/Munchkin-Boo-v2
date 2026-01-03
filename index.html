@@ -641,6 +641,181 @@
     const steps = ["step1","step2","step3","step4"];
 
     // ======================
+    // 👻 Summon Boo scenes (INLINED from assets/boo/summonboo/scenes.json)
+    // ======================
+    const SUMMON_SCENES_DATA = {
+      meta: {
+        version: "1.0",
+        firstScene: "summon_root_1"
+      },
+      scenes: {
+        summon_root_1: {
+          lines: [
+            "Hi {{name}}… I’m right here 👻\n\nWant a little help getting sleepy?"
+          ],
+          choices: [
+            { label: "Help me get sleepy…", goto: "sleepy_root_1" },
+            { label: "Stay close, Boo…", goto: "stay_close_1" },
+            { label: "Back to the story", goto: "return_to_story" }
+          ]
+        },
+
+        sleepy_root_1: {
+          lines: [
+            "Okay… soft and slow.\n\nWhat do you want?"
+          ],
+          choices: [
+            { label: "A night whisper", goto: "night_whisper_1" },
+            { label: "Follow Boo’s glow", goto: "glow_1" },
+            { label: "A cozy choice", goto: "cozy_choice_1" },
+            { label: "A sleepy spell", goto: "sleepy_spell_1" },
+            { label: "Back to the story", goto: "return_to_story" }
+          ]
+        },
+
+        night_whisper_1: {
+          lines: [
+            "Shhh… your bed is a little boat.\n\nAnd tonight, it stays perfectly still."
+          ],
+          choices: [
+            { label: "Again", goto: "night_whisper_2" },
+            { label: "Back to the story", goto: "return_to_story" }
+          ]
+        },
+
+        night_whisper_2: {
+          lines: [
+            "If a thought pops in… that’s okay.\n\nBoo can hold it on the outside of the pillow."
+          ],
+          choices: [
+            { label: "Again", goto: "night_whisper_3" },
+            { label: "Back to the story", goto: "return_to_story" }
+          ]
+        },
+
+        night_whisper_3: {
+          lines: [
+            "Let your eyelids get heavy… like warm blankets.\n\nNothing to do now. Just rest."
+          ],
+          choices: [
+            { label: "One more time", goto: "night_whisper_1" },
+            { label: "Back to the story", goto: "return_to_story" }
+          ]
+        },
+
+        glow_1: {
+          lines: [
+            "Okay… watch Boo’s little glow.\n\nIn…\n\nAnd out…"
+          ],
+          choices: [
+            { label: "Again", goto: "glow_2" },
+            { label: "Back to the story", goto: "return_to_story" }
+          ]
+        },
+
+        glow_2: {
+          lines: [
+            "In… nice and gentle…\n\nOut… slow and soft…"
+          ],
+          choices: [
+            { label: "Again", goto: "glow_3" },
+            { label: "Back to the story", goto: "return_to_story" }
+          ]
+        },
+
+        glow_3: {
+          lines: [
+            "Last one…\n\nIn…\n\nAnd out…\n\nGood."
+          ],
+          choices: [
+            { label: "Again", goto: "glow_1" },
+            { label: "Back to the story", goto: "return_to_story" }
+          ]
+        },
+
+        cozy_choice_1: {
+          lines: [
+            "Where should Boo float?\n\nSomewhere cozy…"
+          ],
+          choices: [
+            { label: "By the blanket", goto: "cozy_blanket_1" },
+            { label: "By the window", goto: "cozy_window_1" },
+            { label: "Back to the story", goto: "return_to_story" }
+          ]
+        },
+
+        cozy_blanket_1: {
+          lines: [
+            "Okay… right by the blanket.\n\nIt’s warm here. Like a quiet hug."
+          ],
+          choices: [
+            { label: "Again", goto: "cozy_blanket_2" },
+            { label: "Back to the story", goto: "return_to_story" }
+          ]
+        },
+
+        cozy_blanket_2: {
+          lines: [
+            "Your toes can go floppy now.\n\nThen your knees.\n\nThen your cheeks."
+          ],
+          choices: [
+            { label: "Again", goto: "cozy_choice_1" },
+            { label: "Back to the story", goto: "return_to_story" }
+          ]
+        },
+
+        cozy_window_1: {
+          lines: [
+            "Okay… by the window.\n\nThe night is doing its quiet work out there."
+          ],
+          choices: [
+            { label: "Again", goto: "cozy_window_2" },
+            { label: "Back to the story", goto: "return_to_story" }
+          ]
+        },
+
+        cozy_window_2: {
+          lines: [
+            "The room is safe.\n\nThe bed is steady.\n\nYou are sleepy in the best way."
+          ],
+          choices: [
+            { label: "Again", goto: "cozy_choice_1" },
+            { label: "Back to the story", goto: "return_to_story" }
+          ]
+        },
+
+        sleepy_spell_1: {
+          lines: [
+            "Okay… say it with Boo (even in your head):\n\nSafe body.\nSoft pillow.\nQuiet room.\nSleepy you."
+          ],
+          choices: [
+            { label: "Say it again", goto: "sleepy_spell_1" },
+            { label: "Back to the story", goto: "return_to_story" }
+          ]
+        },
+
+        stay_close_1: {
+          lines: [
+            "I’m here.\n\nI’ll float nearby… very quietly."
+          ],
+          choices: [
+            { label: "A tiny whisper", goto: "night_whisper_1" },
+            { label: "Back to the story", goto: "return_to_story" }
+          ]
+        },
+
+        return_to_story: {
+          lines: [
+            "Okay.\n\nBack to the story… nice and gentle 👻"
+          ],
+          choices: [
+            { label: "Continue", goto: "END_RETURN" }
+          ]
+        }
+      }
+    };
+
+    // ======================
     // DOM refs
     // ======================
     const themePlayer = document.getElementById("themePlayer");
@@ -920,7 +1095,7 @@
 
     // ======================
     // 👻 SUMMON BOO (works with your scenes.json schema)
-    // Path: assets/boo/summonboo/scenes.json
+    // Now INLINED: no fetch call.
     // ======================
     function isGlowScene(sceneId){
       return typeof sceneId === "string" && sceneId.startsWith("glow_");
@@ -948,7 +1123,7 @@
         booLineEl.textContent =
           "Boo can’t find that scene.\n\nMissing:\n" +
           `"${sceneId}"\n\n` +
-          "Check assets/boo/summonboo/scenes.json";
+          "Check Summon scenes data inside index.html";
         booChoicesEl.innerHTML = "";
         const back = document.createElement("button");
         back.className = "btn";
@@ -1005,16 +1180,15 @@
       booOverlay.classList.remove("hidden");
 
       if (!state.summon.data || !state.summon.data.scenes) {
-        // Most common cause: running via file:// so fetch is blocked.
+        // Shouldn't happen now, but keep a friendly fallback.
         state.summon.data = {
           meta: { firstScene: "error_1" },
           scenes: {
             error_1: {
               lines: [
                 "Oops… Boo can’t load Summon scenes.\n\n" +
-                "If you’re opening index.html as a file (file://), fetch() may be blocked.\n\n" +
-                "Run a local server, or deploy to a host.\n\n" +
-                "Expected path:\nassets/boo/summonboo/scenes.json"
+                "The inlined scene data is missing.\n\n" +
+                "Check SUMMON_SCENES_DATA in index.html"
               ],
               choices: [{ label: "Close", goto: "END_RETURN" }]
             }
@@ -1044,15 +1218,9 @@
       }
     }
 
-    async function loadSummonScenes(){
-      try {
-        const res = await fetch("assets/boo/summonboo/scenes.json", { cache: "no-store" });
-        if (!res.ok) throw new Error("Summon scenes fetch failed: " + res.status);
-        state.summon.data = await res.json();
-      } catch (err) {
-        console.error(err);
-        // Leave null; openSummonBoo will show a friendly fallback inside the modal.
-      }
+    function loadSummonScenes(){
+      // ✅ Inlined: no network call, no path issues, works on file:// too
+      state.summon.data = SUMMON_SCENES_DATA;
     }
 
     // Attach ONE reliable handler (no double-bind)
