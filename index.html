@@ -51,7 +51,7 @@
       padding:26px;
       box-shadow:0 20px 40px rgba(0,0,0,.45);
       position:relative;
-      padding-top: 70px; /* space for icon bar */
+      padding-top:70px; /* space for top bar */
     }
 
     p{ margin:0; line-height:1.7; }
@@ -123,7 +123,7 @@
     }
     input::placeholder{ color:#7F88B8; }
 
-    .hidden{ display:none; }
+    .hidden{ display:none !important; } /* ✅ ensure hidden always wins */
 
     .storyBody p{ margin:0 0 12px; }
     .storyBody p:last-child{ margin-bottom:0; }
@@ -162,8 +162,6 @@
       gap:10px;
       align-items:center;
       justify-content:flex-end;
-      margin:0;
-      flex-wrap:nowrap;
       z-index:5;
     }
     .uiTopBar .btn{
@@ -172,8 +170,8 @@
       border-radius:14px;
       font-weight:900;
       font-size:1.05rem;
-      white-space:nowrap;
       min-width:44px;
+      white-space:nowrap;
     }
 
     @media (max-width: 420px){
@@ -247,10 +245,7 @@
     .storyScroll{ overflow:visible; }
 
     @media (min-width: 768px){
-      .card{
-        padding-left: 28px;
-        padding-right: 28px;
-      }
+      .card{ padding-left: 28px; padding-right: 28px; }
 
       .storyLayout{
         flex-direction:row;
@@ -295,7 +290,7 @@
     }
 
     /* =========================
-       👻 Summon Boo Launcher (outside card)
+       👻 Summon Boo Launcher (ONLY from Mood screen onward)
        ========================= */
     .summonLauncher{
       position:fixed;
@@ -310,33 +305,23 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      z-index:60;
+      z-index:9999; /* ✅ always clickable above everything */
       cursor:pointer;
       transition: transform .08s ease, filter .18s ease, background .15s ease, box-shadow .18s ease;
       user-select:none;
       -webkit-tap-highlight-color: transparent;
+      pointer-events:auto;
     }
     .summonLauncher:hover{
       filter:brightness(1.08);
       background:rgba(11,20,51,0.72);
       box-shadow:0 20px 52px rgba(0,0,0,.40);
     }
-    .summonLauncher:active{
-      transform:translateY(1px) scale(0.985);
-    }
-    .summonLauncher img{
-      width:30px;
-      height:30px;
-      display:block;
-    }
+    .summonLauncher:active{ transform:translateY(1px) scale(0.985); }
+    .summonLauncher img{ width:30px; height:30px; display:block; }
+
     @media (max-width: 420px){
-      .summonLauncher{
-        top:12px;
-        right:12px;
-        width:50px;
-        height:50px;
-        border-radius:15px;
-      }
+      .summonLauncher{ top:12px; right:12px; width:50px; height:50px; border-radius:15px; }
       .summonLauncher img{ width:28px; height:28px; }
     }
 
@@ -352,9 +337,8 @@
       align-items:center;
       justify-content:center;
       padding:18px;
-      z-index:70;
+      z-index:10000;
     }
-    .booOverlay.hidden{ display:none !important; }
 
     .booModal{
       width:min(560px, 100%);
@@ -408,9 +392,7 @@
       margin-top:4px;
     }
 
-    /* =========================
-       ✨ Glow Orb (with “moving glow”)
-       ========================= */
+    /* ✨ Glow Orb: breathe + moving highlight */
     .glowWrap{
       display:flex;
       align-items:center;
@@ -439,7 +421,6 @@
       filter:saturate(1.04);
     }
 
-    /* moving highlight “travels” around the orb */
     .glowOrb::before{
       content:"";
       position:absolute;
@@ -455,7 +436,6 @@
       transform: translate(0,0);
     }
 
-    /* soft inner haze */
     .glowOrb::after{
       content:"";
       position:absolute;
@@ -465,13 +445,8 @@
       opacity:0.9;
     }
 
-    .glowOrb.isBreathing{
-      animation: glowBreathe 2.8s ease-in-out infinite;
-    }
-
-    .glowOrb.isBreathing::before{
-      animation: glowOrbit 4.6s linear infinite;
-    }
+    .glowOrb.isBreathing{ animation: glowBreathe 2.8s ease-in-out infinite; }
+    .glowOrb.isBreathing::before{ animation: glowOrbit 4.6s linear infinite; }
 
     @keyframes glowBreathe{
       0%   { transform: scale(0.86); filter:brightness(0.95) saturate(1.02); }
@@ -479,7 +454,6 @@
       100% { transform: scale(0.86); filter:brightness(0.95) saturate(1.02); }
     }
 
-    /* “orbiting” highlight path */
     @keyframes glowOrbit{
       0%   { transform: translate(-10%, -14%) rotate(0deg); }
       25%  { transform: translate(14%, -10%) rotate(90deg); }
@@ -494,10 +468,6 @@
       text-align:center;
       margin-top:-2px;
     }
-
-    /* ensure hint/glow are truly hidden when toggled */
-    .glowWrap.hidden{ display:none; }
-    .booHint.hidden{ display:none; }
   </style>
 </head>
 
@@ -619,11 +589,9 @@
       currentInteractiveStory: null,
       currentNodeId: null,
 
-      // audio
       track: localStorage.getItem("munchkin_track") || "theme",
       audioStarted: localStorage.getItem("munchkin_audio_started") === "true",
 
-      // summon boo
       summon: {
         data: null,
         currentSceneId: null,
@@ -634,18 +602,25 @@
     };
 
     const steps = ["step1","step2","step3","step4"];
+
     const summonLauncher = document.getElementById("summonLauncher");
+    const booOverlay = document.getElementById("booOverlay");
+    const booCloseBtn = document.getElementById("booCloseBtn");
+    const booLineEl = document.getElementById("booLine");
+    const booChoicesEl = document.getElementById("booChoices");
+    const glowWrap = document.getElementById("glowWrap");
+    const glowOrb = document.getElementById("glowOrb");
+    const glowHint = document.getElementById("glowHint");
 
     function show(id){
       steps.forEach(s => document.getElementById(s).classList.toggle("hidden", s !== id));
-
       if (id !== "step4") {
         const choiceList = document.getElementById("choiceList");
         choiceList.classList.add("hidden");
         choiceList.innerHTML = "";
       }
 
-      // 👻 Summon Boo available from Mood screen onwards (step3 + step4)
+      // ✅ Only show Summon icon from Mood page onwards
       summonLauncher.classList.toggle("hidden", !(id === "step3" || id === "step4"));
     }
 
@@ -655,9 +630,7 @@
       return safe.slice(0, 30) || "";
     }
 
-    function pickRandom(arr){
-      return arr[Math.floor(Math.random() * arr.length)];
-    }
+    function pickRandom(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
 
     function pickStoryForMood(mood){
       const options = state.stories.filter(s => s.mood === mood);
@@ -740,7 +713,6 @@
 
       const doRender = () => {
         renderParagraphs(node.text || []);
-
         const choiceList = document.getElementById("choiceList");
         choiceList.innerHTML = "";
 
@@ -770,7 +742,6 @@
     function stopInteractiveStoryState(){
       state.currentInteractiveStory = null;
       state.currentNodeId = null;
-
       const choiceList = document.getElementById("choiceList");
       choiceList.classList.add("hidden");
       choiceList.innerHTML = "";
@@ -780,7 +751,6 @@
       stopInteractiveStoryState();
       setModePill("Story");
       document.getElementById("anotherStory").textContent = "Another story";
-
       renderArtTitle(story);
       fadeUpdate(() => renderParagraphs(story.text || []));
     }
@@ -789,13 +759,11 @@
       stopInteractiveStoryState();
       setModePill("Story");
       document.getElementById("anotherStory").textContent = "Another story";
-
       document.getElementById("storyTitle").textContent = "No stories yet";
       fadeUpdate(() => {
         document.getElementById("storyBody").innerHTML =
           `<p class="muted">No stories found for mood: ${mood}</p>`;
       });
-
       document.getElementById("storyArt").src = "";
       document.getElementById("storyArt").alt = "";
     }
@@ -832,7 +800,6 @@
       shooting: readCssAudioUrl("--track-shooting")|| "assets/music/shooting-stars.mp3",
       labour:   readCssAudioUrl("--track-labour")  || "assets/music/labour-of-love.wav"
     };
-
     const TRACK_ORDER = ["theme", "shooting", "labour"];
 
     themePlayer.addEventListener("error", () => {
@@ -852,13 +819,9 @@
 
     themePlayer.muted = (localStorage.getItem("munchkin_muted") === "true");
 
-    function updateMuteButton(){
-      muteBtn.textContent = themePlayer.muted ? "🔇" : "🔊";
-    }
-    updateMuteButton();
-
+    function updateMuteButton(){ muteBtn.textContent = themePlayer.muted ? "🔇" : "🔊"; }
     function updateTrackButton(){ trackBtn.textContent = "🎵"; }
-    updateTrackButton();
+    updateMuteButton(); updateTrackButton();
 
     muteBtn.addEventListener("click", () => {
       themePlayer.muted = !themePlayer.muted;
@@ -902,34 +865,18 @@
       if (state.audioStarted) await tryPlay();
     });
 
-    async function startThemeMusic(){
-      applyTrack(state.track);
-      await tryPlay();
-    }
-
-    function stopThemeMusic(){
-      themePlayer.pause();
-      themePlayer.currentTime = 0;
-    }
+    async function startThemeMusic(){ applyTrack(state.track); await tryPlay(); }
+    function stopThemeMusic(){ themePlayer.pause(); themePlayer.currentTime = 0; }
 
     // ======================
-    // 👻 SUMMON BOO (Fetch scenes.json)
+    // 👻 SUMMON BOO (fix: never “does nothing”)
     // ======================
-    const booOverlay = document.getElementById("booOverlay");
-    const booCloseBtn = document.getElementById("booCloseBtn");
-    const booLineEl = document.getElementById("booLine");
-    const booChoicesEl = document.getElementById("booChoices");
-    const glowWrap = document.getElementById("glowWrap");
-    const glowOrb = document.getElementById("glowOrb");
-    const glowHint = document.getElementById("glowHint");
-
     function fillTemplate(text){
       const safeName = state.name || "Friend";
       return String(text || "").replaceAll("{{name}}", safeName);
     }
 
     function isGlowScene(sceneId){
-      // Your reference scenes.json uses ids glow_1/2/3 and no meta flags.
       return typeof sceneId === "string" && sceneId.startsWith("glow_");
     }
 
@@ -951,43 +898,37 @@
       const scene = data?.scenes?.[sceneId];
 
       if (!scene) {
-        // IMPORTANT: do not silently close — show an in-modal error for debugging.
+        // Show an in-modal error (instead of silently closing)
         setGlowVisible(false);
         booLineEl.textContent =
           "Hmm… Boo got a little lost.\n\n" +
-          "I can’t find this scene:\n" +
+          "Missing scene:\n" +
           `"${sceneId}"\n\n` +
-          "Check assets/boo/summonboo/scenes.json for a matching key.";
+          "Check assets/boo/summonboo/scenes.json";
         booChoicesEl.innerHTML = "";
-        const backBtn = document.createElement("button");
-        backBtn.className = "btn";
-        backBtn.type = "button";
-        backBtn.textContent = "Back";
-        backBtn.addEventListener("click", () => {
+        const btn = document.createElement("button");
+        btn.className = "btn";
+        btn.type = "button";
+        btn.textContent = "Back";
+        btn.addEventListener("click", () => {
           const first = data?.meta?.firstScene || "summon_root_1";
           renderSummonScene(first);
         });
-        booChoicesEl.appendChild(backBtn);
-        state.summon.currentSceneId = sceneId;
+        booChoicesEl.appendChild(btn);
         return;
       }
 
       state.summon.currentSceneId = sceneId;
 
-      // Glow behavior based on scene id naming (glow_1/2/3)
-      const showGlow = isGlowScene(sceneId);
       const hint =
         sceneId === "glow_1" ? "Watch the glow… in… and out…" :
         sceneId === "glow_2" ? "In… nice and gentle… out… slow and soft…" :
         sceneId === "glow_3" ? "Last one… in… and out…" :
         "";
-      setGlowVisible(showGlow, hint);
+      setGlowVisible(isGlowScene(sceneId), hint);
 
-      // lines
-      const lines = (scene.lines || []).map(fillTemplate);
-      booLineEl.textContent = lines.join("\n\n");
+      booLineEl.textContent = (scene.lines || []).map(fillTemplate).join("\n\n");
 
-      // choices
       booChoicesEl.innerHTML = "";
       (scene.choices || []).forEach((ch) => {
         const btn = document.createElement("button");
@@ -996,14 +937,12 @@
         btn.textContent = ch.label;
 
         btn.addEventListener("click", () => {
-          // CRITICAL: your scenes.json uses "return_to_story" NOT "END_RETURN"
-          // Only close overlay when we reach END_RETURN.
+          // Only close when END_RETURN is reached
           if (ch.goto === "END_RETURN") {
             closeSummonBoo(true);
             return;
           }
-
-          // Normal navigation between scenes
+          // Otherwise, always navigate (including return_to_story)
           renderSummonScene(ch.goto);
         });
 
@@ -1011,18 +950,22 @@
       });
     }
 
-    function canSummonNow(){
-      const step3Visible = !document.getElementById("step3").classList.contains("hidden");
-      const step4Visible = !document.getElementById("step4").classList.contains("hidden");
-      return step3Visible || step4Visible;
-    }
-
     function openSummonBoo(){
+      // ✅ If the icon is visible, we allow open. No extra gating.
       if (state.summon.overlayOpen) return;
-      if (!canSummonNow()) return;
 
+      // Always open the modal first so it never feels like “nothing happened”
+      state.summon.overlayOpen = true;
+      state.summon.previousFocus = document.activeElement;
+
+      // Soft audio ducking
+      state.summon.previousVolume = themePlayer.volume;
+      themePlayer.volume = Math.max(0.18, themePlayer.volume * 0.45);
+
+      booOverlay.classList.remove("hidden");
+
+      // If scenes didn't load, show a helpful error inside the modal
       if (!state.summon.data || !state.summon.data.scenes) {
-        // show a gentle inline error if the JSON didn't load
         state.summon.data = {
           meta: { firstScene: "error_1" },
           scenes: {
@@ -1033,15 +976,6 @@
           }
         };
       }
-
-      state.summon.overlayOpen = true;
-      state.summon.previousFocus = document.activeElement;
-
-      // Soft audio ducking while Boo is open
-      state.summon.previousVolume = themePlayer.volume;
-      themePlayer.volume = Math.max(0.18, themePlayer.volume * 0.45);
-
-      booOverlay.classList.remove("hidden");
 
       const first = state.summon.data.meta?.firstScene || "summon_root_1";
       renderSummonScene(first);
@@ -1073,35 +1007,22 @@
         if (!res.ok) throw new Error("Summon scenes not found: " + res.status);
         const data = await res.json();
         state.summon.data = data;
-
-        // Validate choice targets (helps catch typos)
-        const scenes = data?.scenes || {};
-        Object.entries(scenes).forEach(([id, scene]) => {
-          (scene.choices || []).forEach((ch) => {
-            if (!("goto" in ch)) console.warn(`[Summon Boo] Scene "${id}" choice missing goto`, ch);
-            else if (ch.goto !== "END_RETURN" && !scenes[ch.goto]) {
-              // This will also flag return_to_story if missing
-              console.warn(`[Summon Boo] Scene "${id}" points to missing goto "${ch.goto}"`);
-            }
-          });
-        });
-
-        console.log("[Summon Boo] scenes loaded:", Object.keys(scenes).length);
       } catch (err) {
         console.log("Summon Boo scenes load failed:", err);
       }
     }
 
+    // ✅ Make the icon reliably clickable on mobile + desktop
     summonLauncher.addEventListener("click", openSummonBoo);
+    summonLauncher.addEventListener("pointerup", (e) => { e.preventDefault(); openSummonBoo(); }, { passive:false });
+
     booCloseBtn.addEventListener("click", () => closeSummonBoo(true));
 
-    // click outside modal closes
     booOverlay.addEventListener("click", (e) => {
       const modal = e.target.closest(".booModal");
       if (!modal) closeSummonBoo(true);
     });
 
-    // Esc closes
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && state.summon.overlayOpen) {
         e.preventDefault();
@@ -1175,7 +1096,6 @@
       stopInteractiveStoryState();
       document.getElementById("nameInput").value = "";
       stopThemeMusic();
-
       closeSummonBoo(false);
       show("step1");
     });
@@ -1185,7 +1105,7 @@
 
     // Boot
     loadStories();
-    loadSummonScenes(); // ✅ uses assets/boo/summonboo/scenes.json
+    loadSummonScenes(); // ✅ assets/boo/summonboo/scenes.json
     show("step1");
   </script>
 </body>
