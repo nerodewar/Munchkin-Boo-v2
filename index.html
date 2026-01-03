@@ -651,18 +651,18 @@
       scenes: {
         summon_root_1: {
           lines: [
-            "Hi {{name}}… I’m right here 👻\n\nWant a little help getting sleepy?"
+            "Hi {{name}}… I’m right here 👻\n\nWant a little help getting to sleep?"
           ],
           choices: [
-            { label: "Help me get sleepy…", goto: "sleepy_root_1" },
-            { label: "Stay close, Boo…", goto: "stay_close_1" },
+            { label: "Help me get to sleep", goto: "sleepy_root_1" },
+            { label: "Stay close to me", goto: "stay_close_1" },
             { label: "Back to the story", goto: "return_to_story" }
           ]
         },
 
         sleepy_root_1: {
           lines: [
-            "Okay… soft and slow.\n\nWhat do you want?"
+            "Okay… let's take it easy.\n\nWhat do you want?"
           ],
           choices: [
             { label: "A night whisper", goto: "night_whisper_1" },
@@ -675,7 +675,7 @@
 
         night_whisper_1: {
           lines: [
-            "Shhh… your bed is a little boat.\n\nAnd tonight, it stays perfectly still."
+            "That's it, {{name}}...\n\nYour bed is a little boat.\n\nAnd tonight, it stays perfectly still."
           ],
           choices: [
             { label: "Again", goto: "night_whisper_2" },
@@ -685,7 +685,7 @@
 
         night_whisper_2: {
           lines: [
-            "If a thought pops in… that’s okay.\n\nBoo can hold it on the outside of the pillow."
+            "If a thought comes up… that’s okay.\n\nWe can hold it or let it flow away like a lantern in the sky..."
           ],
           choices: [
             { label: "Again", goto: "night_whisper_3" },
@@ -695,7 +695,7 @@
 
         night_whisper_3: {
           lines: [
-            "Let your eyelids get heavy… like warm blankets.\n\nNothing to do now. Just rest."
+            "Gently breathe in... and out..."
           ],
           choices: [
             { label: "One more time", goto: "night_whisper_1" },
@@ -705,7 +705,7 @@
 
         glow_1: {
           lines: [
-            "Okay… watch Boo’s little glow.\n\nIn…\n\nAnd out…"
+            "Okay… watch this little glow lamp as it fades in... and out..."
           ],
           choices: [
             { label: "Again", goto: "glow_2" },
@@ -715,7 +715,7 @@
 
         glow_2: {
           lines: [
-            "In… nice and gentle…\n\nOut… slow and soft…"
+            "In… nice and gentle…\n\nOut… So very gently..."
           ],
           choices: [
             { label: "Again", goto: "glow_3" },
@@ -725,7 +725,7 @@
 
         glow_3: {
           lines: [
-            "Last one…\n\nIn…\n\nAnd out…\n\nGood."
+            "Last one…\n\nIn…\n\nAnd out…\n\nThat's good..."
           ],
           choices: [
             { label: "Again", goto: "glow_1" },
@@ -738,15 +738,15 @@
             "Where should Boo float?\n\nSomewhere cozy…"
           ],
           choices: [
-            { label: "By the blanket", goto: "cozy_blanket_1" },
-            { label: "By the window", goto: "cozy_window_1" },
+            { label: "In the sky", goto: "cozy_blanket_1" },
+            { label: "On the ocean", goto: "cozy_window_1" },
             { label: "Back to the story", goto: "return_to_story" }
           ]
         },
 
         cozy_blanket_1: {
           lines: [
-            "Okay… right by the blanket.\n\nIt’s warm here. Like a quiet hug."
+            "Okay… up and away...\n\nIt’s warm here. Like a quiet hug."
           ],
           choices: [
             { label: "Again", goto: "cozy_blanket_2" },
@@ -766,7 +766,7 @@
 
         cozy_window_1: {
           lines: [
-            "Okay… by the window.\n\nThe night is doing its quiet work out there."
+            "Okay… On the waves of the ocean.\n\nThe night is doing its quiet work out here..."
           ],
           choices: [
             { label: "Again", goto: "cozy_window_2" },
@@ -776,7 +776,7 @@
 
         cozy_window_2: {
           lines: [
-            "The room is safe.\n\nThe bed is steady.\n\nYou are sleepy in the best way."
+            "The ocean is safe.\n\nThe waves are steady.\n\nI am resting gently against the shore."
           ],
           choices: [
             { label: "Again", goto: "cozy_choice_1" },
@@ -789,7 +789,6 @@
             "Okay… say it with Boo (even in your head):\n\nSafe body.\nSoft pillow.\nQuiet room.\nSleepy you."
           ],
           choices: [
-            { label: "Say it again", goto: "sleepy_spell_1" },
             { label: "Back to the story", goto: "return_to_story" }
           ]
         },
