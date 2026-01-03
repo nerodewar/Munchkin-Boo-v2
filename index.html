@@ -91,11 +91,6 @@
       box-shadow:0 6px 16px rgba(0,0,0,.28);
       filter:brightness(1.02);
     }
-    
-    .btn:hover::after{
-      opacity:1;
-      transform:translateX(40%);
-    }
 
     .btn.primary{
       background:var(--primary);
@@ -355,6 +350,113 @@
         filter:blur(0.2px);
       }
     }
+
+    /* =========================
+       👻 Summon Boo Overlay
+       ========================= */
+    .booOverlay{
+      position:fixed;
+      inset:0;
+      background:rgba(2,4,14,0.72);
+      backdrop-filter: blur(6px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:50;
+    }
+
+    .booModal{
+      width:min(560px, 100%);
+      background:rgba(11,20,51,0.96);
+      border:1px solid rgba(255,255,255,0.10);
+      border-radius:22px;
+      box-shadow:0 26px 60px rgba(0,0,0,.55);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .booHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 16px 10px;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+    }
+
+    .booTitle{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+
+    .booClose{
+      width:auto;
+      padding:10px 12px;
+      border-radius:14px;
+      font-weight:900;
+      font-size:1rem;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(18,28,70,0.7);
+      color:var(--text);
+      cursor:pointer;
+    }
+    .booClose:hover{ filter:brightness(1.08); }
+
+    .booBody{
+      padding:16px;
+      display:grid;
+      gap:12px;
+    }
+
+    .booLine{
+      color:var(--text);
+      line-height:1.7;
+      white-space:pre-wrap;
+    }
+
+    .booChoices{
+      display:grid;
+      gap:10px;
+      margin-top:4px;
+    }
+
+    /* ✨ Glow widget (used in Follow the Glow scenes) */
+    .glowWrap{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 0 2px;
+    }
+    .glowOrb{
+      width:92px;
+      height:92px;
+      border-radius:999px;
+      background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.65), rgba(124,108,255,.35) 40%, rgba(124,108,255,.10) 70%, rgba(0,0,0,0) 75%);
+      border:1px solid rgba(255,255,255,0.10);
+      box-shadow:
+        0 0 30px rgba(124,108,255,.25),
+        0 0 70px rgba(124,108,255,.18);
+      transform: scale(0.92);
+      opacity:0.95;
+    }
+    .glowOrb.isBreathing{
+      animation: glowBreathe 2.6s ease-in-out infinite;
+    }
+    @keyframes glowBreathe{
+      0%   { transform: scale(0.86); filter:brightness(0.95); }
+      45%  { transform: scale(1.03); filter:brightness(1.08); }
+      100% { transform: scale(0.86); filter:brightness(0.95); }
+    }
+
+    .booHint{
+      font-size:0.85rem;
+      color:rgba(168,177,217,0.92);
+      text-align:center;
+      margin-top:-2px;
+    }
   </style>
 </head>
 <script data-goatcounter="https://munchkin-boo-2.goatcounter.com/count"
@@ -366,6 +468,7 @@
 
       <!-- ✅ Top-right icon-only controls -->
       <div class="uiTopBar">
+        <button id="summonBtn" class="btn hidden" type="button" aria-label="Summon Boo">👻</button>
         <button id="trackBtn" class="btn" type="button" aria-label="Change music track">🎵</button>
         <button id="muteBtn" class="btn" type="button" aria-label="Toggle sound">🔊</button>
       </div>
@@ -449,6 +552,26 @@
     </div>
   </div>
 
+  <!-- 👻 Summon Boo Modal -->
+  <div id="booOverlay" class="booOverlay hidden" role="dialog" aria-modal="true" aria-label="Summon Boo">
+    <div class="booModal">
+      <div class="booHeader">
+        <div class="booTitle">👻 <span>Summon Boo</span></div>
+        <button id="booCloseBtn" class="booClose" type="button" aria-label="Close Summon Boo">✕</button>
+      </div>
+
+      <div class="booBody">
+        <div id="glowWrap" class="glowWrap hidden">
+          <div id="glowOrb" class="glowOrb"></div>
+        </div>
+        <div id="glowHint" class="booHint hidden">Watch the glow… in… and out…</div>
+
+        <div id="booLine" class="booLine"></div>
+        <div id="booChoices" class="booChoices"></div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const state = {
       name: "",
@@ -460,7 +583,16 @@
 
       // audio
       track: localStorage.getItem("munchkin_track") || "theme", // "theme" | "shooting" | "labour"
-      audioStarted: localStorage.getItem("munchkin_audio_started") === "true"
+      audioStarted: localStorage.getItem("munchkin_audio_started") === "true",
+
+      // summon boo
+      summon: {
+        data: null,
+        currentSceneId: "summon_root_1",
+        overlayOpen: false,
+        previousFocus: null,
+        previousVolume: null
+      }
     };
 
     const steps = ["step1","step2","step3","step4"];
@@ -472,6 +604,10 @@
         choiceList.classList.add("hidden");
         choiceList.innerHTML = "";
       }
+
+      // 👻 Summon Boo button only appears during story time (step4)
+      const summonBtn = document.getElementById("summonBtn");
+      summonBtn.classList.toggle("hidden", id !== "step4");
     }
 
     function cleanName(input){
@@ -743,6 +879,279 @@
     }
 
     // ======================
+    // 👻 SUMMON BOO (Bedtime)
+    // ======================
+    const summonBtn = document.getElementById("summonBtn");
+    const booOverlay = document.getElementById("booOverlay");
+    const booCloseBtn = document.getElementById("booCloseBtn");
+    const booLineEl = document.getElementById("booLine");
+    const booChoicesEl = document.getElementById("booChoices");
+    const glowWrap = document.getElementById("glowWrap");
+    const glowOrb = document.getElementById("glowOrb");
+    const glowHint = document.getElementById("glowHint");
+
+    // Bedtime Summon scenes (inline so you can ship immediately).
+    // If you later want this in a separate file, keep structure identical and fetch it.
+    const DEFAULT_SUMMON_DATA = {
+      meta: { version: "1.0", firstScene: "summon_root_1" },
+      scenes: {
+        summon_root_1: {
+          lines: ["Hi {{name}}… I’m right here 👻\n\nWant a little help getting sleepy?"],
+          choices: [
+            { label: "Help me get sleepy…", goto: "sleepy_root_1" },
+            { label: "Stay close, Boo…", goto: "stay_close_1" },
+            { label: "Back to the story", goto: "END_RETURN" }
+          ]
+        },
+
+        sleepy_root_1: {
+          lines: ["Okay… soft and slow.\n\nWhat do you want?"],
+          choices: [
+            { label: "A night whisper", goto: "night_whisper_1" },
+            { label: "Follow Boo’s glow", goto: "glow_1" },
+            { label: "A cozy choice", goto: "cozy_choice_1" },
+            { label: "A sleepy spell", goto: "sleepy_spell_1" },
+            { label: "Back to the story", goto: "END_RETURN" }
+          ]
+        },
+
+        night_whisper_1: {
+          lines: ["Shhh… your bed is a little boat.\n\nAnd tonight, it stays perfectly still."],
+          choices: [
+            { label: "Again", goto: "night_whisper_2" },
+            { label: "Back to the story", goto: "END_RETURN" }
+          ]
+        },
+        night_whisper_2: {
+          lines: ["If a thought pops in… that’s okay.\n\nBoo can hold it on the outside of the pillow."],
+          choices: [
+            { label: "Again", goto: "night_whisper_3" },
+            { label: "Back to the story", goto: "END_RETURN" }
+          ]
+        },
+        night_whisper_3: {
+          lines: ["Let your eyelids get heavy… like warm blankets.\n\nNothing to do now. Just rest."],
+          choices: [
+            { label: "One more time", goto: "night_whisper_1" },
+            { label: "Back to the story", goto: "END_RETURN" }
+          ]
+        },
+
+        // ✨ Follow the Glow (bedtime-friendly micro loop)
+        glow_1: {
+          meta: { showGlow: true, hint: "Watch the glow… in… and out…" },
+          lines: ["Okay… watch Boo’s little glow.\n\nIn…\n\nAnd out…"],
+          choices: [
+            { label: "Again", goto: "glow_2" },
+            { label: "Back to the story", goto: "END_RETURN" }
+          ]
+        },
+        glow_2: {
+          meta: { showGlow: true, hint: "In… nice and gentle… out… slow and soft…" },
+          lines: ["In… nice and gentle…\n\nOut… slow and soft…"],
+          choices: [
+            { label: "Again", goto: "glow_3" },
+            { label: "Back to the story", goto: "END_RETURN" }
+          ]
+        },
+        glow_3: {
+          meta: { showGlow: true, hint: "Last one… in… and out…" },
+          lines: ["Last one…\n\nIn…\n\nAnd out…\n\nGood."],
+          choices: [
+            { label: "Again", goto: "glow_1" },
+            { label: "Back to the story", goto: "END_RETURN" }
+          ]
+        },
+
+        cozy_choice_1: {
+          lines: ["Where should Boo float?\n\nSomewhere cozy…"],
+          choices: [
+            { label: "By the blanket", goto: "cozy_blanket_1" },
+            { label: "By the window", goto: "cozy_window_1" },
+            { label: "Back to the story", goto: "END_RETURN" }
+          ]
+        },
+        cozy_blanket_1: {
+          lines: ["Okay… right by the blanket.\n\nIt’s warm here. Like a quiet hug."],
+          choices: [
+            { label: "Again", goto: "cozy_blanket_2" },
+            { label: "Back to the story", goto: "END_RETURN" }
+          ]
+        },
+        cozy_blanket_2: {
+          lines: ["Your toes can go floppy now.\n\nThen your knees.\n\nThen your cheeks."],
+          choices: [
+            { label: "Again", goto: "cozy_choice_1" },
+            { label: "Back to the story", goto: "END_RETURN" }
+          ]
+        },
+        cozy_window_1: {
+          lines: ["Okay… by the window.\n\nThe night is doing its quiet work out there."],
+          choices: [
+            { label: "Again", goto: "cozy_window_2" },
+            { label: "Back to the story", goto: "END_RETURN" }
+          ]
+        },
+        cozy_window_2: {
+          lines: ["The room is safe.\n\nThe bed is steady.\n\nYou are sleepy in the best way."],
+          choices: [
+            { label: "Again", goto: "cozy_choice_1" },
+            { label: "Back to the story", goto: "END_RETURN" }
+          ]
+        },
+
+        sleepy_spell_1: {
+          lines: ["Okay… say it with Boo (even in your head):\n\nSafe body.\nSoft pillow.\nQuiet room.\nSleepy you."],
+          choices: [
+            { label: "Say it again", goto: "sleepy_spell_1" },
+            { label: "Back to the story", goto: "END_RETURN" }
+          ]
+        },
+
+        stay_close_1: {
+          lines: ["I’m here.\n\nI’ll float nearby… very quietly."],
+          choices: [
+            { label: "Follow Boo’s glow", goto: "glow_1" },
+            { label: "Back to the story", goto: "END_RETURN" }
+          ]
+        }
+      }
+    };
+
+    function fillTemplate(text){
+      const safeName = state.name || "Friend";
+      return String(text || "").replaceAll("{{name}}", safeName);
+    }
+
+    function setGlowVisible(isVisible, hintText){
+      glowWrap.classList.toggle("hidden", !isVisible);
+      glowHint.classList.toggle("hidden", !isVisible);
+
+      if (isVisible) {
+        glowOrb.classList.add("isBreathing");
+        glowHint.textContent = hintText || "Watch the glow… in… and out…";
+      } else {
+        glowOrb.classList.remove("isBreathing");
+        glowHint.textContent = "";
+      }
+    }
+
+    function renderSummonScene(sceneId){
+      const data = state.summon.data || DEFAULT_SUMMON_DATA;
+      const scene = data.scenes?.[sceneId];
+
+      if (!scene) {
+        // fallback: close gently if missing
+        closeSummonBoo(true);
+        return;
+      }
+
+      state.summon.currentSceneId = sceneId;
+
+      // show glow only in glow scenes
+      const showGlow = !!scene.meta?.showGlow;
+      setGlowVisible(showGlow, scene.meta?.hint);
+
+      // lines
+      const lines = (scene.lines || []).map(fillTemplate);
+      booLineEl.textContent = lines.join("\n\n");
+
+      // choices
+      booChoicesEl.innerHTML = "";
+      (scene.choices || []).forEach(ch => {
+        const btn = document.createElement("button");
+        btn.className = "btn";
+        btn.type = "button";
+        btn.textContent = ch.label;
+
+        btn.addEventListener("click", () => {
+          if (ch.goto === "END_RETURN") {
+            closeSummonBoo(true);
+            return;
+          }
+          renderSummonScene(ch.goto);
+        });
+
+        booChoicesEl.appendChild(btn);
+      });
+    }
+
+    function openSummonBoo(){
+      if (state.summon.overlayOpen) return;
+
+      // Only allow summon during story mode screen
+      const isStoryScreen = !document.getElementById("step4").classList.contains("hidden");
+      if (!isStoryScreen) return;
+
+      state.summon.overlayOpen = true;
+      state.summon.previousFocus = document.activeElement;
+
+      // Soft audio ducking (keeps bedtime feel)
+      state.summon.previousVolume = themePlayer.volume;
+      themePlayer.volume = Math.max(0.18, themePlayer.volume * 0.45);
+
+      booOverlay.classList.remove("hidden");
+
+      // start at root every time (ritual-like)
+      const data = state.summon.data || DEFAULT_SUMMON_DATA;
+      renderSummonScene(data.meta?.firstScene || "summon_root_1");
+
+      // focus close for accessibility
+      booCloseBtn.focus({ preventScroll: true });
+    }
+
+    function closeSummonBoo(restoreFocus){
+      if (!state.summon.overlayOpen) return;
+
+      state.summon.overlayOpen = false;
+      booOverlay.classList.add("hidden");
+      setGlowVisible(false);
+
+      // restore audio volume
+      if (typeof state.summon.previousVolume === "number") {
+        themePlayer.volume = state.summon.previousVolume;
+      }
+
+      // restore focus
+      if (restoreFocus && state.summon.previousFocus && state.summon.previousFocus.focus) {
+        state.summon.previousFocus.focus({ preventScroll: true });
+      } else if (restoreFocus) {
+        summonBtn.focus({ preventScroll: true });
+      }
+    }
+
+    // Optional: load summon scenes from file if you add it later.
+    // If fetch fails, we use DEFAULT_SUMMON_DATA.
+    async function loadSummonScenes(){
+      try {
+        const res = await fetch("./munchkin_summon_scenes.json");
+        if (!res.ok) throw new Error("munchkin_summon_scenes.json not found");
+        const data = await res.json();
+        if (data && data.scenes) state.summon.data = data;
+      } catch (err) {
+        // no problem — inline fallback is used
+        console.log("Summon scenes: using inline fallback.");
+      }
+    }
+
+    summonBtn.addEventListener("click", openSummonBoo);
+    booCloseBtn.addEventListener("click", () => closeSummonBoo(true));
+
+    // click outside modal closes (gentle + expected)
+    booOverlay.addEventListener("click", (e) => {
+      const modal = e.target.closest(".booModal");
+      if (!modal) closeSummonBoo(true);
+    });
+
+    // Esc closes
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && state.summon.overlayOpen) {
+        e.preventDefault();
+        closeSummonBoo(true);
+      }
+    });
+
+    // ======================
     // UI wiring
     // ======================
     document.getElementById("startBtn").addEventListener("click", () => {
@@ -808,13 +1217,21 @@
       stopInteractiveStoryState();
       document.getElementById("nameInput").value = "";
       stopThemeMusic();
+
+      // if summon is open, close it
+      closeSummonBoo(false);
+
       show("step1");
     });
 
     document.getElementById("nameInput").value = localStorage.getItem("munchkin_name") || "";
     document.getElementById("year").textContent = new Date().getFullYear();
 
+    // ======================
+    // Boot
+    // ======================
     loadStories();
+    loadSummonScenes(); // optional external file, with inline fallback
     show("step1");
   </script>
 </body>
