@@ -1129,7 +1129,9 @@
         back.className = "btn";
         back.type = "button";
         back.textContent = "Back";
-        back.addEventListener("click", () => {
+        back.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
           const first = data?.meta?.firstScene || "summon_root_1";
           renderSummonScene(first);
         });
@@ -1155,7 +1157,11 @@
         btn.type = "button";
         btn.textContent = ch.label;
 
-        btn.addEventListener("click", () => {
+        // ✅ Prevent backdrop close / bubbling issues
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
           // Your JSON uses return_to_story -> Continue -> END_RETURN
           if (ch.goto === "END_RETURN") {
             closeSummonBoo(true);
@@ -1223,18 +1229,24 @@
       state.summon.data = SUMMON_SCENES_DATA;
     }
 
-    // Attach ONE reliable handler (no double-bind)
-    summonLauncher.addEventListener("pointerdown", (e) => {
+    // ✅ Attach ONE reliable handler (use click, not pointerdown)
+    summonLauncher.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
       openSummonBoo();
     });
 
-    booCloseBtn.addEventListener("click", () => closeSummonBoo(true));
-    booOverlay.addEventListener("click", (e) => {
-      const modal = e.target.closest(".booModal");
-      if (!modal) closeSummonBoo(true);
+    booCloseBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      closeSummonBoo(true);
     });
+
+    // ✅ Only close when the actual backdrop is clicked
+    booOverlay.addEventListener("click", (e) => {
+      if (e.target === booOverlay) closeSummonBoo(true);
+    });
+
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && state.summon.overlayOpen) {
         e.preventDefault();
