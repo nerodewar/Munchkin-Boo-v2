@@ -155,7 +155,7 @@
       opacity:0.85;
     }
 
-    /* ✅ Top-right icon controls */
+    /* ✅ Top-right icon controls (INSIDE card) */
     .uiTopBar{
       position:absolute;
       top:14px;
@@ -175,26 +175,15 @@
       font-weight:900;
       font-size:1.05rem;
       white-space:nowrap;
-      min-width:44px; /* ✅ keeps icon buttons tappable */
+      min-width:44px;
     }
 
     /* ✅ Reserve space so the top-right audio buttons never overlap content */
-    .card{
-      padding-top: 70px; /* default space for the icon bar */
-    }
+    .card{ padding-top: 70px; }
+    .uiTopBar{ top: 12px; right: 12px; }
 
-    /* Keep buttons tucked in tight */
-    .uiTopBar{
-      top: 12px;
-      right: 12px;
-    }
-
-    /* ✅ On smaller screens, reserve a bit more space and slightly shrink buttons */
     @media (max-width: 420px){
-      .card{
-        padding-top: 84px; /* more space for the icon bar */
-      }
-
+      .card{ padding-top: 84px; }
       .uiTopBar .btn{
         padding: 8px 10px;
         font-size: 1rem;
@@ -233,17 +222,6 @@
       gap:8px;
     }
 
-    .supportBtn{
-      max-width:240px;
-      padding:10px 14px;
-      font-size:0.70rem;
-      font-weight:620;
-      background:#141E4A;
-      border:1px solid rgba(255,255,255,0.08);
-      opacity:0.5;
-    }
-    .supportBtn:hover{ opacity:1; }
-
     .copyright{
       margin-top:20px;
       text-align:center;
@@ -255,90 +233,59 @@
     /* =========================
        📖 Open-book Story Layout
        ========================= */
-
-    /* The story "page" wrapper */
     .storyLayout{
       display:flex;
-      flex-direction:column; /* mobile default */
+      flex-direction:column;
       gap:16px;
       position:relative;
     }
-
-    /* Left "page" (image) */
-    .storyLeft{
-      flex:1;
-    }
-
-    /* Right "page" (text) */
-    .storyRight{
-      flex:1;
-      min-width:0;
-    }
-
-    /* Art */
+    .storyLeft{ flex:1; }
+    .storyRight{ flex:1; min-width:0; }
     .storyArt{
       width:100%;
-      aspect-ratio: 4 / 3;   /* a bit more book-like than 1/1 */
+      aspect-ratio: 4 / 3;
       object-fit:cover;
       border-radius:16px;
       display:block;
       border:1px solid var(--border);
       margin:0;
     }
+    .storyScroll{ overflow:visible; }
 
-    /* The text area becomes the scrollable panel on larger screens */
-    .storyScroll{
-      overflow:visible;  /* mobile: normal flow */
-    }
-
-    /* ✅ Larger devices: “open book” */
     @media (min-width: 768px){
-      /* give the card a more book-like footprint */
-      .card{
-        padding-left: 28px;
-        padding-right: 28px;
-      }
+      .card{ padding-left: 28px; padding-right: 28px; }
 
       .storyLayout{
         flex-direction:row;
         align-items:stretch;
         gap:22px;
       }
+      .storyLeft{ width:48%; }
 
-      .storyLeft{
-        width:48%;
-      }
-
-      /* 🔒 Right side height is locked to match the image */
       .storyRight{
         width:52%;
-        height:520px;              /* matches image height */
+        height:520px;
         display:flex;
         flex-direction:column;
         position:relative;
       }
-
-      /* make the image feel big & “page-like” */
       .storyArt{
-        aspect-ratio: 3 / 4;       /* portrait-ish for a page */
+        aspect-ratio: 3 / 4;
         height: 520px;
         max-height: 520px;
       }
-
-      /* scroll only the story text/choices within that height */
       .storyScroll{
         flex:1;
-        overflow-y:auto;           /* scrolls exactly at image bottom */
-        padding-right:10px;        /* space for scrollbar */
+        overflow-y:auto;
+        padding-right:10px;
       }
 
-      /* ✅ subtle centre “spine” shadow */
       .storyLayout::after{
         content:"";
         position:absolute;
         top:0;
         bottom:0;
-        left:calc(48% + 11px); /* approx center accounting for gap */
+        left:calc(48% + 11px);
         width:22px;
         pointer-events:none;
         background:
@@ -349,6 +296,53 @@
         opacity:.55;
         filter:blur(0.2px);
       }
+    }
+
+    /* =========================
+       👻 Summon Boo Launcher (OUTSIDE card)
+       “just off the card at all times”
+       ========================= */
+    .summonLauncher{
+      position:fixed;
+      top:14px;
+      right:14px;
+      width:54px;
+      height:54px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(11,20,51,0.60);
+      box-shadow:0 18px 44px rgba(0,0,0,.35);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:60;
+      cursor:pointer;
+      transition: transform .08s ease, filter .18s ease, background .15s ease, box-shadow .18s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .summonLauncher:hover{
+      filter:brightness(1.08);
+      background:rgba(11,20,51,0.72);
+      box-shadow:0 20px 52px rgba(0,0,0,.40);
+    }
+    .summonLauncher:active{
+      transform:translateY(1px) scale(0.985);
+    }
+    .summonLauncher img{
+      width:30px;
+      height:30px;
+      display:block;
+    }
+    @media (max-width: 420px){
+      .summonLauncher{
+        top:12px;
+        right:12px;
+        width:50px;
+        height:50px;
+        border-radius:15px;
+      }
+      .summonLauncher img{ width:28px; height:28px; }
     }
 
     /* =========================
@@ -363,8 +357,10 @@
       align-items:center;
       justify-content:center;
       padding:18px;
-      z-index:50;
+      z-index:70;
     }
+    /* ✅ Critical: ensure hidden ALWAYS wins for overlay */
+    .booOverlay.hidden{ display:none !important; }
 
     .booModal{
       width:min(560px, 100%);
@@ -375,7 +371,6 @@
       overflow:hidden;
       position:relative;
     }
-
     .booHeader{
       display:flex;
       align-items:center;
@@ -383,7 +378,6 @@
       padding:14px 16px 10px;
       border-bottom:1px solid rgba(255,255,255,0.08);
     }
-
     .booTitle{
       display:flex;
       align-items:center;
@@ -391,7 +385,6 @@
       font-weight:900;
       letter-spacing:.2px;
     }
-
     .booClose{
       width:auto;
       padding:10px 12px;
@@ -410,20 +403,18 @@
       display:grid;
       gap:12px;
     }
-
     .booLine{
       color:var(--text);
       line-height:1.7;
       white-space:pre-wrap;
     }
-
     .booChoices{
       display:grid;
       gap:10px;
       margin-top:4px;
     }
 
-    /* ✨ Glow widget (used in Follow the Glow scenes) */
+    /* ✨ Glow widget (Follow the Glow scenes) */
     .glowWrap{
       display:flex;
       align-items:center;
@@ -450,7 +441,6 @@
       45%  { transform: scale(1.03); filter:brightness(1.08); }
       100% { transform: scale(0.86); filter:brightness(0.95); }
     }
-
     .booHint{
       font-size:0.85rem;
       color:rgba(168,177,217,0.92);
@@ -459,16 +449,21 @@
     }
   </style>
 </head>
+
 <script data-goatcounter="https://munchkin-boo-2.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 
 <body>
+  <!-- 👻 Summon Boo Launcher (OFF CARD) -->
+  <button id="summonLauncher" class="summonLauncher hidden" type="button" aria-label="Summon Boo">
+    <img src="assets/icon/summon-boo.png" alt="" />
+  </button>
+
   <div class="wrap">
     <div class="card">
 
-      <!-- ✅ Top-right icon-only controls -->
+      <!-- ✅ Top-right icon-only controls (inside card) -->
       <div class="uiTopBar">
-        <button id="summonBtn" class="btn hidden" type="button" aria-label="Summon Boo">👻</button>
         <button id="trackBtn" class="btn" type="button" aria-label="Change music track">🎵</button>
         <button id="muteBtn" class="btn" type="button" aria-label="Toggle sound">🔊</button>
       </div>
@@ -512,14 +507,11 @@
       <section id="step4" class="hidden">
         <div class="pill" id="modePill">Story</div>
 
-        <!-- 📖 Book layout wrapper -->
         <div class="storyLayout">
-          <!-- Left page: art -->
           <div class="storyLeft">
             <img class="storyArt" id="storyArt" alt="" />
           </div>
 
-          <!-- Right page: title + scrollable story -->
           <div class="storyRight">
             <h2 id="storyTitle"></h2>
 
@@ -541,14 +533,11 @@
       </section>
 
       <div class="supportDivider"></div>
-
-      <div class="supportWrap">
-      </div>
+      <div class="supportWrap"></div>
 
       <footer class="copyright">
         © <span id="year"></span> James Ritchie and www.boo-industries.com. All rights reserved. Contact: jamesalexritchie@outlook.com
       </footer>
-
     </div>
   </div>
 
@@ -582,13 +571,12 @@
       currentNodeId: null,
 
       // audio
-      track: localStorage.getItem("munchkin_track") || "theme", // "theme" | "shooting" | "labour"
+      track: localStorage.getItem("munchkin_track") || "theme",
       audioStarted: localStorage.getItem("munchkin_audio_started") === "true",
 
       // summon boo
       summon: {
         data: null,
-        currentSceneId: "summon_root_1",
         overlayOpen: false,
         previousFocus: null,
         previousVolume: null
@@ -596,6 +584,7 @@
     };
 
     const steps = ["step1","step2","step3","step4"];
+    const summonLauncher = document.getElementById("summonLauncher");
 
     function show(id){
       steps.forEach(s => document.getElementById(s).classList.toggle("hidden", s !== id));
@@ -605,9 +594,9 @@
         choiceList.innerHTML = "";
       }
 
-      // 👻 Summon Boo button only appears during story time (step4)
-      const summonBtn = document.getElementById("summonBtn");
-      summonBtn.classList.toggle("hidden", id !== "step4");
+      // 👻 Summon Boo becomes available once on Mood selection screen (step3) and stays for step4
+      const shouldShowSummon = (id === "step3" || id === "step4");
+      summonLauncher.classList.toggle("hidden", !shouldShowSummon);
     }
 
     function cleanName(input){
@@ -813,16 +802,12 @@
 
     themePlayer.muted = (localStorage.getItem("munchkin_muted") === "true");
 
-    // ✅ Icon-only mute button
     function updateMuteButton(){
       muteBtn.textContent = themePlayer.muted ? "🔇" : "🔊";
     }
     updateMuteButton();
 
-    // ✅ Icon-only track button (never shows names)
-    function updateTrackButton(){
-      trackBtn.textContent = "🎵";
-    }
+    function updateTrackButton(){ trackBtn.textContent = "🎵"; }
     updateTrackButton();
 
     muteBtn.addEventListener("click", () => {
@@ -861,7 +846,6 @@
       return TRACK_ORDER[(i + 1) % TRACK_ORDER.length];
     }
 
-    // ✅ Cycle through 3 tracks, and attempt play (click is user gesture)
     trackBtn.addEventListener("click", async () => {
       const next = nextTrackKey(state.track);
       applyTrack(next);
@@ -879,9 +863,9 @@
     }
 
     // ======================
-    // 👻 SUMMON BOO (Bedtime)
+    // 👻 SUMMON BOO (Fetch JSON)
+    // Path: assets/boo/summonboo/scenes.json
     // ======================
-    const summonBtn = document.getElementById("summonBtn");
     const booOverlay = document.getElementById("booOverlay");
     const booCloseBtn = document.getElementById("booCloseBtn");
     const booLineEl = document.getElementById("booLine");
@@ -889,134 +873,6 @@
     const glowWrap = document.getElementById("glowWrap");
     const glowOrb = document.getElementById("glowOrb");
     const glowHint = document.getElementById("glowHint");
-
-    // Bedtime Summon scenes (inline so you can ship immediately).
-    // If you later want this in a separate file, keep structure identical and fetch it.
-    const DEFAULT_SUMMON_DATA = {
-      meta: { version: "1.0", firstScene: "summon_root_1" },
-      scenes: {
-        summon_root_1: {
-          lines: ["Hi {{name}}… I’m right here 👻\n\nWant a little help getting sleepy?"],
-          choices: [
-            { label: "Help me get sleepy…", goto: "sleepy_root_1" },
-            { label: "Stay close, Boo…", goto: "stay_close_1" },
-            { label: "Back to the story", goto: "END_RETURN" }
-          ]
-        },
-
-        sleepy_root_1: {
-          lines: ["Okay… soft and slow.\n\nWhat do you want?"],
-          choices: [
-            { label: "A night whisper", goto: "night_whisper_1" },
-            { label: "Follow Boo’s glow", goto: "glow_1" },
-            { label: "A cozy choice", goto: "cozy_choice_1" },
-            { label: "A sleepy spell", goto: "sleepy_spell_1" },
-            { label: "Back to the story", goto: "END_RETURN" }
-          ]
-        },
-
-        night_whisper_1: {
-          lines: ["Shhh… your bed is a little boat.\n\nAnd tonight, it stays perfectly still."],
-          choices: [
-            { label: "Again", goto: "night_whisper_2" },
-            { label: "Back to the story", goto: "END_RETURN" }
-          ]
-        },
-        night_whisper_2: {
-          lines: ["If a thought pops in… that’s okay.\n\nBoo can hold it on the outside of the pillow."],
-          choices: [
-            { label: "Again", goto: "night_whisper_3" },
-            { label: "Back to the story", goto: "END_RETURN" }
-          ]
-        },
-        night_whisper_3: {
-          lines: ["Let your eyelids get heavy… like warm blankets.\n\nNothing to do now. Just rest."],
-          choices: [
-            { label: "One more time", goto: "night_whisper_1" },
-            { label: "Back to the story", goto: "END_RETURN" }
-          ]
-        },
-
-        // ✨ Follow the Glow (bedtime-friendly micro loop)
-        glow_1: {
-          meta: { showGlow: true, hint: "Watch the glow… in… and out…" },
-          lines: ["Okay… watch Boo’s little glow.\n\nIn…\n\nAnd out…"],
-          choices: [
-            { label: "Again", goto: "glow_2" },
-            { label: "Back to the story", goto: "END_RETURN" }
-          ]
-        },
-        glow_2: {
-          meta: { showGlow: true, hint: "In… nice and gentle… out… slow and soft…" },
-          lines: ["In… nice and gentle…\n\nOut… slow and soft…"],
-          choices: [
-            { label: "Again", goto: "glow_3" },
-            { label: "Back to the story", goto: "END_RETURN" }
-          ]
-        },
-        glow_3: {
-          meta: { showGlow: true, hint: "Last one… in… and out…" },
-          lines: ["Last one…\n\nIn…\n\nAnd out…\n\nGood."],
-          choices: [
-            { label: "Again", goto: "glow_1" },
-            { label: "Back to the story", goto: "END_RETURN" }
-          ]
-        },
-
-        cozy_choice_1: {
-          lines: ["Where should Boo float?\n\nSomewhere cozy…"],
-          choices: [
-            { label: "By the blanket", goto: "cozy_blanket_1" },
-            { label: "By the window", goto: "cozy_window_1" },
-            { label: "Back to the story", goto: "END_RETURN" }
-          ]
-        },
-        cozy_blanket_1: {
-          lines: ["Okay… right by the blanket.\n\nIt’s warm here. Like a quiet hug."],
-          choices: [
-            { label: "Again", goto: "cozy_blanket_2" },
-            { label: "Back to the story", goto: "END_RETURN" }
-          ]
-        },
-        cozy_blanket_2: {
-          lines: ["Your toes can go floppy now.\n\nThen your knees.\n\nThen your cheeks."],
-          choices: [
-            { label: "Again", goto: "cozy_choice_1" },
-            { label: "Back to the story", goto: "END_RETURN" }
-          ]
-        },
-        cozy_window_1: {
-          lines: ["Okay… by the window.\n\nThe night is doing its quiet work out there."],
-          choices: [
-            { label: "Again", goto: "cozy_window_2" },
-            { label: "Back to the story", goto: "END_RETURN" }
-          ]
-        },
-        cozy_window_2: {
-          lines: ["The room is safe.\n\nThe bed is steady.\n\nYou are sleepy in the best way."],
-          choices: [
-            { label: "Again", goto: "cozy_choice_1" },
-            { label: "Back to the story", goto: "END_RETURN" }
-          ]
-        },
-
-        sleepy_spell_1: {
-          lines: ["Okay… say it with Boo (even in your head):\n\nSafe body.\nSoft pillow.\nQuiet room.\nSleepy you."],
-          choices: [
-            { label: "Say it again", goto: "sleepy_spell_1" },
-            { label: "Back to the story", goto: "END_RETURN" }
-          ]
-        },
-
-        stay_close_1: {
-          lines: ["I’m here.\n\nI’ll float nearby… very quietly."],
-          choices: [
-            { label: "Follow Boo’s glow", goto: "glow_1" },
-            { label: "Back to the story", goto: "END_RETURN" }
-          ]
-        }
-      }
-    };
 
     function fillTemplate(text){
       const safeName = state.name || "Friend";
@@ -1037,16 +893,14 @@
     }
 
     function renderSummonScene(sceneId){
-      const data = state.summon.data || DEFAULT_SUMMON_DATA;
-      const scene = data.scenes?.[sceneId];
+      const data = state.summon.data;
+      const scene = data?.scenes?.[sceneId];
 
       if (!scene) {
-        // fallback: close gently if missing
+        // If scene missing, close gently rather than break the bedtime vibe
         closeSummonBoo(true);
         return;
       }
-
-      state.summon.currentSceneId = sceneId;
 
       // show glow only in glow scenes
       const showGlow = !!scene.meta?.showGlow;
@@ -1074,29 +928,46 @@
 
         booChoicesEl.appendChild(btn);
       });
+
+      // store current scene for potential debugging / extension
+      state.summon.currentSceneId = sceneId;
+    }
+
+    function canSummonNow(){
+      const step3Visible = !document.getElementById("step3").classList.contains("hidden");
+      const step4Visible = !document.getElementById("step4").classList.contains("hidden");
+      return step3Visible || step4Visible;
     }
 
     function openSummonBoo(){
       if (state.summon.overlayOpen) return;
+      if (!canSummonNow()) return;
 
-      // Only allow summon during story mode screen
-      const isStoryScreen = !document.getElementById("step4").classList.contains("hidden");
-      if (!isStoryScreen) return;
+      if (!state.summon.data || !state.summon.data.scenes) {
+        // If JSON isn't loaded, show a gentle message instead of a dead modal
+        state.summon.data = {
+          meta: { firstScene: "error_1" },
+          scenes: {
+            error_1: {
+              lines: ["Oops… Boo can’t find the Summon scenes.\n\nCheck: assets/boo/summonboo/scenes.json"],
+              choices: [{ label: "Close", goto: "END_RETURN" }]
+            }
+          }
+        };
+      }
 
       state.summon.overlayOpen = true;
       state.summon.previousFocus = document.activeElement;
 
-      // Soft audio ducking (keeps bedtime feel)
+      // Soft audio ducking
       state.summon.previousVolume = themePlayer.volume;
       themePlayer.volume = Math.max(0.18, themePlayer.volume * 0.45);
 
       booOverlay.classList.remove("hidden");
 
-      // start at root every time (ritual-like)
-      const data = state.summon.data || DEFAULT_SUMMON_DATA;
-      renderSummonScene(data.meta?.firstScene || "summon_root_1");
+      const first = state.summon.data.meta?.firstScene || "summon_root_1";
+      renderSummonScene(first);
 
-      // focus close for accessibility
       booCloseBtn.focus({ preventScroll: true });
     }
 
@@ -1107,43 +978,37 @@
       booOverlay.classList.add("hidden");
       setGlowVisible(false);
 
-      // restore audio volume
       if (typeof state.summon.previousVolume === "number") {
         themePlayer.volume = state.summon.previousVolume;
       }
 
-      // restore focus
       if (restoreFocus && state.summon.previousFocus && state.summon.previousFocus.focus) {
         state.summon.previousFocus.focus({ preventScroll: true });
       } else if (restoreFocus) {
-        summonBtn.focus({ preventScroll: true });
+        summonLauncher.focus({ preventScroll: true });
       }
     }
 
-    // Optional: load summon scenes from file if you add it later.
-    // If fetch fails, we use DEFAULT_SUMMON_DATA.
     async function loadSummonScenes(){
       try {
-        const res = await fetch("./munchkin_summon_scenes.json");
-        if (!res.ok) throw new Error("munchkin_summon_scenes.json not found");
+        const res = await fetch("assets/boo/summonboo/scenes.json", { cache: "no-store" });
+        if (!res.ok) throw new Error("Summon scenes not found");
         const data = await res.json();
-        if (data && data.scenes) state.summon.data = data;
+        state.summon.data = data;
       } catch (err) {
-        // no problem — inline fallback is used
-        console.log("Summon scenes: using inline fallback.");
+        console.log("Summon Boo scenes load failed:", err);
+        // Leave null; openSummonBoo() will show a gentle error scene if clicked.
       }
     }
 
-    summonBtn.addEventListener("click", openSummonBoo);
+    summonLauncher.addEventListener("click", openSummonBoo);
     booCloseBtn.addEventListener("click", () => closeSummonBoo(true));
 
-    // click outside modal closes (gentle + expected)
     booOverlay.addEventListener("click", (e) => {
       const modal = e.target.closest(".booModal");
       if (!modal) closeSummonBoo(true);
     });
 
-    // Esc closes
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && state.summon.overlayOpen) {
         e.preventDefault();
@@ -1218,20 +1083,16 @@
       document.getElementById("nameInput").value = "";
       stopThemeMusic();
 
-      // if summon is open, close it
       closeSummonBoo(false);
-
       show("step1");
     });
 
     document.getElementById("nameInput").value = localStorage.getItem("munchkin_name") || "";
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    // ======================
     // Boot
-    // ======================
     loadStories();
-    loadSummonScenes(); // optional external file, with inline fallback
+    loadSummonScenes(); // ✅ loads assets/boo/summonboo/scenes.json
     show("step1");
   </script>
 </body>
