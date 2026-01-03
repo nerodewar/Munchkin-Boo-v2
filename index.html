@@ -1,290 +1,1156 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Munchkin Boo</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Munchkin Boo</title>
 
-<style>
-/* ---------- base ---------- */
-:root{
-  --bg:#050A1A;
-  --card:#0B1433;
-  --text:#F4F6FF;
-  --muted:#A8B1D9;
-  --border:#1C2A5E;
-  --primary:#7C6CFF;
-  --radius:20px;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-}
-.hidden{display:none!important}
-.wrap{width:min(520px,100%)}
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:26px;
-  position:relative;
-}
-h1,h2{margin:0}
-p{margin:0;line-height:1.6}
-.btn{
-  width:100%;
-  padding:14px;
-  border-radius:14px;
-  border:1px solid var(--border);
-  background:#121C46;
-  color:var(--text);
-  font-weight:700;
-  cursor:pointer;
-}
-.btn.primary{background:var(--primary);color:#0B0F2A;border:none}
+  <style>
+    :root{
+      --bg:#050A1A;
+      --card:#0B1433;
+      --text:#F4F6FF;
+      --muted:#A8B1D9;
+      --border:#1C2A5E;
+      --primary:#7C6CFF;
+      --primaryText:#0B0F2A;
+      --button:#121C46;
+      --buttonHover:#18235C;
+      --radius:20px;
 
-/* ---------- summon icon ---------- */
-#summonLauncher{
-  position:fixed;
-  top:14px;
-  right:14px;
-  width:54px;
-  height:54px;
-  border-radius:16px;
-  background:#121C46;
-  border:1px solid rgba(255,255,255,.12);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-  cursor:pointer;
-}
-#summonLauncher img{width:30px;height:30px}
+      /* ✅ Audio tracks stored in CSS (read by JS) */
+      --track-theme:   url("assets/music/theme-music.mp3");
+      --track-shooting:url("assets/music/shooting-stars.mp3");
+      --track-labour:  url("assets/music/labour-of-love.mp3");
+    }
 
-/* ---------- summon overlay ---------- */
-#booOverlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.65);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:10000;
-}
-#booModal{
-  width:min(560px,100%);
-  background:#0B1433;
-  border-radius:22px;
-  border:1px solid rgba(255,255,255,.1);
-  padding:18px;
-}
-#booLine{white-space:pre-wrap;line-height:1.7}
-#booChoices{margin-top:14px;display:grid;gap:10px}
+    *{ box-sizing:border-box; }
 
-/* ---------- glow orb ---------- */
-#glowWrap{display:flex;justify-content:center;margin-bottom:10px}
-#glowOrb{
-  width:96px;
-  height:96px;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 30% 30%,
-      rgba(255,255,255,.6),
-      rgba(124,108,255,.25) 40%,
-      rgba(124,108,255,.12) 65%,
-      transparent 75%);
-  box-shadow:
-    0 0 40px rgba(124,108,255,.35),
-    0 0 90px rgba(124,108,255,.25);
-}
-#glowOrb.animate{
-  animation: breathe 2.8s ease-in-out infinite;
-}
-#glowOrb.animate::before{
-  content:"";
-  position:absolute;
-  inset:-30%;
-  background:
-    radial-gradient(circle at 20% 20%,
-      rgba(255,255,255,.7),
-      rgba(255,255,255,.2) 25%,
-      transparent 60%);
-  animation: orbit 4.5s linear infinite;
-}
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
 
-@keyframes breathe{
-  0%{transform:scale(.9)}
-  50%{transform:scale(1.05)}
-  100%{transform:scale(.9)}
-}
-@keyframes orbit{
-  from{transform:rotate(0deg)}
-  to{transform:rotate(360deg)}
-}
-</style>
+    .wrap{ width:min(520px,100%); }
+
+    @media (min-width: 768px){
+      .wrap{ width:min(980px, 100%); }
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:26px;
+      padding-top:70px;
+      box-shadow:0 20px 40px rgba(0,0,0,.45);
+      position:relative;
+    }
+
+    p{ margin:0; line-height:1.7; }
+    .muted{ color:var(--muted); line-height:1.6; }
+    .card > section > * + * { margin-top:14px; }
+
+    h1{ font-size:1.45rem; margin:0; letter-spacing:.3px; }
+    h2{ margin:0; font-size:1.25rem; letter-spacing:.2px; }
+
+    .btn{
+      width:100%;
+      padding:14px 16px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background:var(--button);
+      color:var(--text);
+      font-weight:800;
+      font-size:1rem;
+      cursor:pointer;
+      transition:background .15s ease, transform .08s ease, box-shadow .18s ease, filter .18s ease;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      overflow:hidden;
+      will-change: transform;
+    }
+    .btn:hover{
+      background:var(--buttonHover);
+      box-shadow:0 10px 26px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.06) inset;
+      filter:brightness(1.06);
+    }
+    .btn:active{
+      transform:translateY(1px) scale(0.985);
+      box-shadow:0 6px 16px rgba(0,0,0,.28);
+      filter:brightness(1.02);
+    }
+
+    .btn.primary{
+      background:var(--primary);
+      color:var(--primaryText);
+      border:none;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    input{
+      width:100%;
+      padding:14px 16px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background:#0E1840;
+      color:var(--text);
+      font-size:1rem;
+      outline:none;
+    }
+    input::placeholder{ color:#7F88B8; }
+
+    .hidden{ display:none !important; }
+
+    .storyBody p{ margin:0 0 12px; }
+    .storyBody p:last-child{ margin-bottom:0; }
+
+    .fadeWrap{
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 260ms ease, transform 260ms ease;
+      will-change: opacity, transform;
+    }
+    .fadeWrap.isFading{
+      opacity: 0;
+      transform: translateY(4px);
+    }
+
+    .topRow{
+      display:flex;
+      gap:10px;
+      margin-top:12px;
+    }
+    .topRow .btn{ flex:1; }
+
+    .status{
+      margin-top:10px;
+      font-size:0.85rem;
+      color:var(--muted);
+      opacity:0.85;
+    }
+
+    .uiTopBar{
+      position:absolute;
+      top:12px;
+      right:12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:flex-end;
+      z-index:5;
+    }
+    .uiTopBar .btn{
+      width:auto;
+      padding:10px 12px;
+      border-radius:14px;
+      font-weight:900;
+      font-size:1.05rem;
+      min-width:44px;
+      white-space:nowrap;
+    }
+
+    @media (max-width: 420px){
+      .card{ padding-top: 84px; }
+      .uiTopBar .btn{
+        padding: 8px 10px;
+        font-size: 1rem;
+        min-width: 40px;
+      }
+    }
+
+    .choiceList{
+      margin-top:14px;
+      display:grid;
+      gap:10px;
+    }
+
+    .pill{
+      display:inline-block;
+      font-size:0.8rem;
+      color:var(--muted);
+      border:1px solid var(--border);
+      padding:6px 10px;
+      border-radius:999px;
+      margin-bottom:10px;
+    }
+
+    .supportDivider{
+      height:1px;
+      background:var(--border);
+      opacity:0.45;
+      margin:18px 0 8px;
+    }
+
+    .copyright{
+      margin-top:20px;
+      text-align:center;
+      font-size:0.7rem;
+      color:var(--muted);
+      opacity:0.6;
+    }
+
+    /* =========================
+       📖 Open-book Story Layout
+       ========================= */
+    .storyLayout{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      position:relative;
+    }
+    .storyLeft{ flex:1; }
+    .storyRight{ flex:1; min-width:0; }
+    .storyArt{
+      width:100%;
+      aspect-ratio: 4 / 3;
+      object-fit:cover;
+      border-radius:16px;
+      display:block;
+      border:1px solid var(--border);
+      margin:0;
+    }
+    .storyScroll{ overflow:visible; }
+
+    @media (min-width: 768px){
+      .card{ padding-left: 28px; padding-right: 28px; }
+
+      .storyLayout{
+        flex-direction:row;
+        align-items:stretch;
+        gap:22px;
+      }
+      .storyLeft{ width:48%; }
+
+      .storyRight{
+        width:52%;
+        height:520px;
+        display:flex;
+        flex-direction:column;
+        position:relative;
+      }
+      .storyArt{
+        aspect-ratio: 3 / 4;
+        height: 520px;
+        max-height: 520px;
+      }
+      .storyScroll{
+        flex:1;
+        overflow-y:auto;
+        padding-right:10px;
+      }
+      .storyLayout::after{
+        content:"";
+        position:absolute;
+        top:0;
+        bottom:0;
+        left:calc(48% + 11px);
+        width:22px;
+        pointer-events:none;
+        background:
+          radial-gradient(ellipse at center,
+            rgba(0,0,0,.40) 0%,
+            rgba(0,0,0,.22) 35%,
+            rgba(0,0,0,0) 70%);
+        opacity:.55;
+        filter:blur(0.2px);
+      }
+    }
+
+    /* =========================
+       👻 Summon Boo Launcher
+       (ONLY from Mood screen onward)
+       ========================= */
+    .summonLauncher{
+      position:fixed;
+      top:14px;
+      right:14px;
+      width:54px;
+      height:54px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(11,20,51,0.60);
+      box-shadow:0 18px 44px rgba(0,0,0,.35);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:9999;
+      cursor:pointer;
+      transition: transform .08s ease, filter .18s ease, background .15s ease, box-shadow .18s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .summonLauncher:hover{
+      filter:brightness(1.08);
+      background:rgba(11,20,51,0.72);
+      box-shadow:0 20px 52px rgba(0,0,0,.40);
+    }
+    .summonLauncher:active{ transform:translateY(1px) scale(0.985); }
+    .summonLauncher img{ width:30px; height:30px; display:block; }
+
+    @media (max-width: 420px){
+      .summonLauncher{ top:12px; right:12px; width:50px; height:50px; border-radius:15px; }
+      .summonLauncher img{ width:28px; height:28px; }
+    }
+
+    /* =========================
+       👻 Summon Boo Overlay
+       ========================= */
+    .booOverlay{
+      position:fixed;
+      inset:0;
+      background:rgba(2,4,14,0.72);
+      backdrop-filter: blur(6px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:10000;
+    }
+
+    .booModal{
+      width:min(560px, 100%);
+      background:rgba(11,20,51,0.96);
+      border:1px solid rgba(255,255,255,0.10);
+      border-radius:22px;
+      box-shadow:0 26px 60px rgba(0,0,0,.55);
+      overflow:hidden;
+      position:relative;
+    }
+    .booHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 16px 10px;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+    }
+    .booTitle{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    .booClose{
+      width:auto;
+      padding:10px 12px;
+      border-radius:14px;
+      font-weight:900;
+      font-size:1rem;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(18,28,70,0.7);
+      color:var(--text);
+      cursor:pointer;
+    }
+
+    .booBody{
+      padding:16px;
+      display:grid;
+      gap:12px;
+    }
+    .booLine{
+      color:var(--text);
+      line-height:1.7;
+      white-space:pre-wrap;
+    }
+    .booChoices{
+      display:grid;
+      gap:10px;
+      margin-top:4px;
+    }
+
+    /* =========================
+       ✨ Glow Orb (glow travels around orb)
+       ========================= */
+    .glowWrap{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 0 2px;
+    }
+    .glowOrb{
+      width:104px;
+      height:104px;
+      border-radius:999px;
+      position:relative;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.12);
+      background:
+        radial-gradient(circle at 40% 35%,
+          rgba(255,255,255,.35),
+          rgba(124,108,255,.22) 45%,
+          rgba(124,108,255,.10) 70%,
+          rgba(0,0,0,0) 78%);
+      box-shadow:
+        0 0 36px rgba(124,108,255,.28),
+        0 0 96px rgba(124,108,255,.20);
+      opacity:0.98;
+    }
+
+    /* The moving glow band */
+    .glowOrb::before{
+      content:"";
+      position:absolute;
+      inset:-35%;
+      background:
+        radial-gradient(circle at 25% 30%,
+          rgba(255,255,255,.65),
+          rgba(255,255,255,.20) 22%,
+          rgba(124,108,255,.12) 42%,
+          rgba(0,0,0,0) 60%);
+      mix-blend-mode: screen;
+      opacity:0.95;
+      transform: translate(-10%, -12%) rotate(0deg);
+      filter: blur(0.2px);
+    }
+
+    /* Inner shimmer */
+    .glowOrb::after{
+      content:"";
+      position:absolute;
+      inset:12%;
+      border-radius:999px;
+      background:
+        radial-gradient(circle at 38% 30%, rgba(255,255,255,.16), rgba(0,0,0,0) 62%);
+      opacity:0.9;
+    }
+
+    .glowOrb.isBreathing{
+      animation: glowBreathe 2.8s ease-in-out infinite;
+    }
+    .glowOrb.isBreathing::before{
+      animation: glowOrbit 4.2s linear infinite;
+    }
+
+    @keyframes glowBreathe{
+      0%   { transform: scale(0.88); filter:brightness(0.96) saturate(1.03); }
+      45%  { transform: scale(1.06); filter:brightness(1.12) saturate(1.10); }
+      100% { transform: scale(0.88); filter:brightness(0.96) saturate(1.03); }
+    }
+
+    @keyframes glowOrbit{
+      0%   { transform: translate(-12%, -14%) rotate(0deg); }
+      25%  { transform: translate(14%, -10%) rotate(90deg); }
+      50%  { transform: translate(10%, 14%) rotate(180deg); }
+      75%  { transform: translate(-14%, 10%) rotate(270deg); }
+      100% { transform: translate(-12%, -14%) rotate(360deg); }
+    }
+
+    .booHint{
+      font-size:0.85rem;
+      color:rgba(168,177,217,0.92);
+      text-align:center;
+      margin-top:-2px;
+    }
+
+    /* small visible JS error banner */
+    .jsErrorBanner{
+      position:fixed;
+      left:12px;
+      right:12px;
+      bottom:12px;
+      background:rgba(255,60,90,0.18);
+      border:1px solid rgba(255,60,90,0.35);
+      color:#ffd3dc;
+      padding:10px 12px;
+      border-radius:14px;
+      z-index:20000;
+      font-size:0.85rem;
+      line-height:1.35;
+      box-shadow:0 14px 34px rgba(0,0,0,.40);
+    }
+    .jsErrorBanner code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:0.82rem;
+      color:#fff;
+    }
+  </style>
 </head>
 
+<script data-goatcounter="https://munchkin-boo-2.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+
 <body>
+  <!-- 👻 Summon Boo Launcher -->
+  <button id="summonLauncher" class="summonLauncher hidden" type="button" aria-label="Summon Boo">
+    <img src="assets/icon/summon-boo.png" alt="" />
+  </button>
 
-<button id="summonLauncher" class="hidden">
-  <img src="assets/icon/summon-boo.png" alt="Summon Boo"/>
-</button>
+  <div class="wrap">
+    <div class="card">
 
-<div class="wrap">
-<div class="card">
+      <div class="uiTopBar">
+        <button id="trackBtn" class="btn" type="button" aria-label="Change music track">🎵</button>
+        <button id="muteBtn" class="btn" type="button" aria-label="Toggle sound">🔊</button>
+      </div>
 
-<section id="step1">
-  <h1>Hi, I’m Munchkin Boo 🌙</h1>
-  <p class="muted">Press start to begin.</p>
-  <button class="btn primary" id="startBtn">Start</button>
-</section>
+      <audio id="themePlayer" preload="none"></audio>
 
-<section id="step2" class="hidden">
-  <h1>Your name?</h1>
-  <input id="nameInput" placeholder="Name…"/>
-  <button class="btn primary" id="toMood">Continue</button>
-</section>
+      <section id="step1">
+        <h1>Hi, I’m Munchkin Boo ✨🌙</h1>
+        <p class="muted">I’m your personal bedtime story application.</p>
+        <p class="muted">Press start to begin.</p>
+        <button class="btn primary" id="startBtn" type="button">Start</button>
+        <div class="status" id="loadStatus">Loading stories…</div>
+        <div class="status" id="audioStatus"></div>
+      </section>
 
-<section id="step3" class="hidden">
-  <h1>Choose a mood</h1>
-  <button class="btn" data-mood="sleepy">😴 Sleepy</button>
-</section>
+      <section id="step2" class="hidden">
+        <h1>What’s your name?</h1>
+        <p class="muted">So I can personalise your story.</p>
+        <input id="nameInput" placeholder="Type your name…" autocomplete="given-name" />
+        <button class="btn primary" id="toMood" type="button">Continue</button>
+        <button class="btn" id="backToWelcome" type="button">Back</button>
+      </section>
 
-<section id="step4" class="hidden">
-  <h2>Story playing…</h2>
-</section>
+      <section id="step3" class="hidden">
+        <h1>What mood are you in?</h1>
+        <p class="muted">Choose one:</p>
 
-</div>
-</div>
+        <div class="row">
+          <button class="btn" data-mood="sleepy" type="button">😴 Sleepy</button>
+          <button class="btn" data-mood="hungry" type="button">🍪 Hungry</button>
+        </div>
 
-<!-- ---------- Summon Boo Overlay ---------- -->
-<div id="booOverlay" class="hidden">
-  <div id="booModal">
-    <div id="glowWrap" class="hidden">
-      <div id="glowOrb"></div>
+        <div class="row">
+          <button class="btn" data-mood="naughty" type="button">😈 Naughty</button>
+          <button class="btn" data-mood="adventure" type="button">🧭 Adventure</button>
+        </div>
+
+        <button class="btn" id="backToName" type="button">Back</button>
+      </section>
+
+      <section id="step4" class="hidden">
+        <div class="pill" id="modePill">Story</div>
+
+        <div class="storyLayout">
+          <div class="storyLeft">
+            <img class="storyArt" id="storyArt" alt="" />
+          </div>
+
+          <div class="storyRight">
+            <h2 id="storyTitle"></h2>
+
+            <div class="storyScroll">
+              <div class="fadeWrap" id="fadeWrap">
+                <div class="storyBody" id="storyBody"></div>
+                <div class="choiceList hidden" id="choiceList"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="topRow">
+          <button class="btn primary" id="anotherStory" type="button">Another story</button>
+          <button class="btn" id="changeMood" type="button">Change mood</button>
+        </div>
+
+        <button class="btn" id="restart" type="button">Restart Munchkin Boo</button>
+      </section>
+
+      <div class="supportDivider"></div>
+
+      <footer class="copyright">
+        © <span id="year"></span> James Ritchie and www.boo-industries.com. All rights reserved. Contact: jamesalexritchie@outlook.com
+      </footer>
+
     </div>
-    <div id="booLine"></div>
-    <div id="booChoices"></div>
   </div>
-</div>
 
-<script>
-/* =========================================================
-   INLINE SUMMON BOO SCENES (NO FETCH, NO PATH ISSUES)
-   ========================================================= */
-const SUMMON_DATA = {
-  meta:{firstScene:"summon_root_1"},
-  scenes: {
-    summon_root_1:{
-      lines:["Hi {{name}}… I’m right here 👻\n\nWant a little help getting sleepy?"],
-      choices:[
-        {label:"Help me get sleepy…",goto:"sleepy_root_1"},
-        {label:"Stay close, Boo…",goto:"stay_close_1"},
-        {label:"Back to the story",goto:"END_RETURN"}
-      ]
-    },
-    sleepy_root_1:{
-      lines:["Okay… soft and slow.\n\nWhat do you want?"],
-      choices:[
-        {label:"Follow Boo’s glow",goto:"glow_1"},
-        {label:"Back to the story",goto:"END_RETURN"}
-      ]
-    },
-    glow_1:{
-      lines:["In…\n\nAnd out…"],
-      choices:[
-        {label:"Again",goto:"glow_1"},
-        {label:"Back to the story",goto:"END_RETURN"}
-      ]
-    },
-    stay_close_1:{
-      lines:["I’m here.\n\nVery quietly."],
-      choices:[
-        {label:"Back to the story",goto:"END_RETURN"}
-      ]
+  <!-- 👻 Summon Boo Overlay -->
+  <div id="booOverlay" class="booOverlay hidden" role="dialog" aria-modal="true" aria-label="Summon Boo">
+    <div class="booModal">
+      <div class="booHeader">
+        <div class="booTitle">👻 <span>Summon Boo</span></div>
+        <button id="booCloseBtn" class="booClose" type="button" aria-label="Close Summon Boo">✕</button>
+      </div>
+
+      <div class="booBody">
+        <div id="glowWrap" class="glowWrap hidden">
+          <div id="glowOrb" class="glowOrb"></div>
+        </div>
+        <div id="glowHint" class="booHint hidden">Watch the glow… in… and out…</div>
+
+        <div id="booLine" class="booLine"></div>
+        <div id="booChoices" class="booChoices"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ======================
+    // Visible JS error banner (so we never “do nothing” silently)
+    // ======================
+    function showJsErrorBanner(message){
+      let el = document.getElementById("jsErrorBanner");
+      if (!el) {
+        el = document.createElement("div");
+        el.id = "jsErrorBanner";
+        el.className = "jsErrorBanner";
+        document.body.appendChild(el);
+      }
+      el.innerHTML = `Something crashed in <b>index.html</b>.<br/><code>${String(message || "Unknown error")}</code>`;
     }
-  }
-};
 
-/* =========================================================
-   STATE
-   ========================================================= */
-const state={
-  step:"step1",
-  name:"",
-  summon:{scene:null}
-};
+    window.addEventListener("error", (e) => {
+      showJsErrorBanner(e?.message || e?.error?.message || "Unknown error");
+    });
 
-/* =========================================================
-   HELPERS
-   ========================================================= */
-function showStep(id){
-  ["step1","step2","step3","step4"].forEach(s=>{
-    document.getElementById(s).classList.toggle("hidden",s!==id);
-  });
-  document.getElementById("summonLauncher")
-    .classList.toggle("hidden",!(id==="step3"||id==="step4"));
-}
-function fill(t){return t.replaceAll("{{name}}",state.name||"Friend")}
+    window.addEventListener("unhandledrejection", (e) => {
+      showJsErrorBanner(e?.reason?.message || e?.reason || "Unhandled promise rejection");
+    });
 
-/* =========================================================
-   SUMMON ENGINE
-   ========================================================= */
-const overlay=document.getElementById("booOverlay");
-const lineEl=document.getElementById("booLine");
-const choicesEl=document.getElementById("booChoices");
-const glowWrap=document.getElementById("glowWrap");
-const glowOrb=document.getElementById("glowOrb");
+    // ======================
+    // App state
+    // ======================
+    const state = {
+      name: "",
+      mood: "",
+      stories: [],
+      lastStoryIdByMood: {},
+      currentInteractiveStory: null,
+      currentNodeId: null,
 
-function renderSummon(id){
-  if(id==="END_RETURN"){closeSummon();return;}
-  const scene=SUMMON_DATA.scenes[id];
-  state.summon.scene=id;
+      track: localStorage.getItem("munchkin_track") || "theme",
+      audioStarted: localStorage.getItem("munchkin_audio_started") === "true",
 
-  glowWrap.classList.toggle("hidden",!id.startsWith("glow_"));
-  glowOrb.classList.toggle("animate",id.startsWith("glow_"));
+      summon: {
+        data: null,
+        overlayOpen: false,
+        previousFocus: null,
+        previousVolume: null,
+        currentSceneId: null
+      }
+    };
 
-  lineEl.textContent=scene.lines.map(fill).join("\n\n");
-  choicesEl.innerHTML="";
-  scene.choices.forEach(c=>{
-    const b=document.createElement("button");
-    b.className="btn";
-    b.textContent=c.label;
-    b.onclick=()=>renderSummon(c.goto);
-    choicesEl.appendChild(b);
-  });
-}
+    const steps = ["step1","step2","step3","step4"];
 
-function openSummon(){
-  overlay.classList.remove("hidden");
-  renderSummon(SUMMON_DATA.meta.firstScene);
-}
-function closeSummon(){
-  overlay.classList.add("hidden");
-}
+    // ======================
+    // DOM refs
+    // ======================
+    const themePlayer = document.getElementById("themePlayer");
+    const muteBtn = document.getElementById("muteBtn");
+    const trackBtn = document.getElementById("trackBtn");
+    const audioStatus = document.getElementById("audioStatus");
 
-/* =========================================================
-   WIRES
-   ========================================================= */
-document.getElementById("summonLauncher").onclick=openSummon;
-overlay.onclick=e=>{if(e.target===overlay)closeSummon();};
+    const summonLauncher = document.getElementById("summonLauncher");
+    const booOverlay = document.getElementById("booOverlay");
+    const booCloseBtn = document.getElementById("booCloseBtn");
+    const booLineEl = document.getElementById("booLine");
+    const booChoicesEl = document.getElementById("booChoices");
+    const glowWrap = document.getElementById("glowWrap");
+    const glowOrb = document.getElementById("glowOrb");
+    const glowHint = document.getElementById("glowHint");
 
-document.getElementById("startBtn").onclick=()=>showStep("step2");
-document.getElementById("toMood").onclick=()=>{
-  state.name=document.getElementById("nameInput").value||"Friend";
-  showStep("step3");
-};
-document.querySelector("[data-mood]").onclick=()=>showStep("step4");
+    // ======================
+    // Helpers
+    // ======================
+    function show(id){
+      steps.forEach(s => document.getElementById(s).classList.toggle("hidden", s !== id));
 
-showStep("step1");
-</script>
+      if (id !== "step4") {
+        const choiceList = document.getElementById("choiceList");
+        choiceList.classList.add("hidden");
+        choiceList.innerHTML = "";
+      }
+
+      // ✅ Only show Summon icon from Mood page onward
+      summonLauncher.classList.toggle("hidden", !(id === "step3" || id === "step4"));
+    }
+
+    function cleanName(input){
+      const trimmed = (input || "").trim();
+      const safe = trimmed.replace(/[^a-zA-Z '-]/g, "");
+      return safe.slice(0, 30) || "";
+    }
+
+    function pickRandom(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+
+    function fillTemplate(text){
+      const safeName = state.name || "Friend";
+      return String(text || "").replaceAll("{{name}}", safeName);
+    }
+
+    // ======================
+    // Stories
+    // ======================
+    function pickStoryForMood(mood){
+      const options = state.stories.filter(s => s.mood === mood);
+      if (!options.length) return null;
+
+      const lastId = state.lastStoryIdByMood[mood] || null;
+      if (options.length === 1) return options[0];
+
+      let picked;
+      do { picked = pickRandom(options); }
+      while (picked.id === lastId);
+
+      state.lastStoryIdByMood[mood] = picked.id;
+      return picked;
+    }
+
+    function pickAnotherAdventureStory(){
+      const adventures = state.stories.filter(s =>
+        s.mood === "adventure" && s.type === "choose_your_own" && s.nodes && s.start
+      );
+      if (!adventures.length) return null;
+      if (adventures.length === 1) return adventures[0];
+
+      const currentId = state.currentInteractiveStory?.id || null;
+      const options = adventures.filter(s => s.id !== currentId);
+      return options.length ? pickRandom(options) : adventures[0];
+    }
+
+    function setModePill(text){
+      document.getElementById("modePill").textContent = text;
+    }
+
+    function renderArtTitle(story){
+      const art = document.getElementById("storyArt");
+      art.onerror = () => console.log("Image failed to load:", art.src);
+      art.src = story.art || "";
+      art.alt = story.title || "";
+      document.getElementById("storyTitle").textContent = story.title || "";
+    }
+
+    function renderParagraphs(paragraphArray){
+      const body = document.getElementById("storyBody");
+      body.innerHTML = (paragraphArray || []).map(p => `<p>${fillTemplate(p)}</p>`).join("");
+    }
+
+    function fadeUpdate(renderFn){
+      const el = document.getElementById("fadeWrap");
+      if (!el) { renderFn(); return; }
+      el.classList.add("isFading");
+      window.setTimeout(() => {
+        renderFn();
+        requestAnimationFrame(() => el.classList.remove("isFading"));
+      }, 260);
+    }
+
+    function startInteractiveStory(story){
+      state.currentInteractiveStory = story;
+      state.currentNodeId = story.start;
+
+      setModePill("Adventure");
+      document.getElementById("anotherStory").textContent = "Another adventure";
+
+      const choiceList = document.getElementById("choiceList");
+      choiceList.classList.remove("hidden");
+
+      renderArtTitle(story);
+      fadeUpdate(() => renderInteractiveNode(true));
+    }
+
+    function renderInteractiveNode(skipFade=false){
+      const story = state.currentInteractiveStory;
+      if (!story || !story.nodes) return;
+
+      const node = story.nodes[state.currentNodeId];
+      if (!node) return;
+
+      const doRender = () => {
+        renderParagraphs(node.text || []);
+
+        const choiceList = document.getElementById("choiceList");
+        choiceList.innerHTML = "";
+
+        const choices = node.choices || [];
+        if (choices.length === 0) {
+          choiceList.classList.add("hidden");
+        } else {
+          choiceList.classList.remove("hidden");
+          choices.forEach(ch => {
+            const btn = document.createElement("button");
+            btn.className = "btn";
+            btn.type = "button";
+            btn.textContent = ch.label;
+            btn.addEventListener("click", () => {
+              state.currentNodeId = ch.next;
+              renderInteractiveNode();
+            });
+            choiceList.appendChild(btn);
+          });
+        }
+      };
+
+      if (skipFade) doRender();
+      else fadeUpdate(doRender);
+    }
+
+    function stopInteractiveStoryState(){
+      state.currentInteractiveStory = null;
+      state.currentNodeId = null;
+
+      const choiceList = document.getElementById("choiceList");
+      choiceList.classList.add("hidden");
+      choiceList.innerHTML = "";
+    }
+
+    function renderNormalStory(story){
+      stopInteractiveStoryState();
+      setModePill("Story");
+      document.getElementById("anotherStory").textContent = "Another story";
+
+      renderArtTitle(story);
+      fadeUpdate(() => renderParagraphs(story.text || []));
+    }
+
+    function showNoStories(mood){
+      stopInteractiveStoryState();
+      setModePill("Story");
+      document.getElementById("anotherStory").textContent = "Another story";
+
+      document.getElementById("storyTitle").textContent = "No stories yet";
+      fadeUpdate(() => {
+        document.getElementById("storyBody").innerHTML =
+          `<p class="muted">No stories found for mood: ${mood}</p>`;
+      });
+
+      document.getElementById("storyArt").src = "";
+      document.getElementById("storyArt").alt = "";
+    }
+
+    async function loadStories(){
+      const status = document.getElementById("loadStatus");
+      try {
+        const res = await fetch("./stories.json", { cache: "no-store" });
+        if (!res.ok) throw new Error("stories.json not found");
+        const data = await res.json();
+        state.stories = data.stories || [];
+        status.textContent = ``;
+      } catch (err) {
+        console.error(err);
+        status.textContent = "Couldn’t load stories. Check stories.json is in the repo root.";
+      }
+    }
+
+    // ======================
+    // AUDIO
+    // ======================
+    function readCssAudioUrl(varName){
+      const raw = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+      return raw.replace(/^url\((['"]?)(.*?)\1\)$/i, "$2");
+    }
+
+    const TRACKS = {
+      theme:    readCssAudioUrl("--track-theme")   || "assets/music/theme-music.mp3",
+      shooting: readCssAudioUrl("--track-shooting")|| "assets/music/shooting-stars.mp3",
+      labour:   readCssAudioUrl("--track-labour")  || "assets/music/labour-of-love.wav"
+    };
+    const TRACK_ORDER = ["theme", "shooting", "labour"];
+
+    themePlayer.addEventListener("error", () => {
+      const code = themePlayer.error?.code;
+      const msg =
+        code === 1 ? "MEDIA_ERR_ABORTED" :
+        code === 2 ? "MEDIA_ERR_NETWORK" :
+        code === 3 ? "MEDIA_ERR_DECODE (format/codec)" :
+        code === 4 ? "MEDIA_ERR_SRC_NOT_SUPPORTED" :
+        "Unknown audio error";
+      audioStatus.textContent = "Audio error: " + msg;
+    });
+
+    themePlayer.addEventListener("playing", () => { audioStatus.textContent = ""; });
+    themePlayer.addEventListener("waiting", () => { audioStatus.textContent = "Loading sound…"; });
+
+    themePlayer.muted = (localStorage.getItem("munchkin_muted") === "true");
+    function updateMuteButton(){ muteBtn.textContent = themePlayer.muted ? "🔇" : "🔊"; }
+    function updateTrackButton(){ trackBtn.textContent = "🎵"; }
+    updateMuteButton(); updateTrackButton();
+
+    muteBtn.addEventListener("click", () => {
+      themePlayer.muted = !themePlayer.muted;
+      localStorage.setItem("munchkin_muted", themePlayer.muted);
+      updateMuteButton();
+    });
+
+    function applyTrack(trackKey){
+      if (!TRACKS[trackKey]) trackKey = "theme";
+      state.track = trackKey;
+      localStorage.setItem("munchkin_track", state.track);
+
+      themePlayer.pause();
+      themePlayer.src = TRACKS[trackKey];
+      themePlayer.loop = true;
+      themePlayer.volume = 0.5;
+      themePlayer.load();
+      updateTrackButton();
+    }
+
+    async function tryPlay(){
+      try {
+        await themePlayer.play();
+        audioStatus.textContent = "";
+        state.audioStarted = true;
+        localStorage.setItem("munchkin_audio_started", "true");
+      } catch (err) {
+        audioStatus.textContent = "If sound doesn’t begin, tap Sound on, then tap Start again.";
+      }
+    }
+
+    function nextTrackKey(current){
+      const i = TRACK_ORDER.indexOf(current);
+      return TRACK_ORDER[(i + 1) % TRACK_ORDER.length];
+    }
+
+    trackBtn.addEventListener("click", async () => {
+      const next = nextTrackKey(state.track);
+      applyTrack(next);
+      if (state.audioStarted) await tryPlay();
+    });
+
+    async function startThemeMusic(){ applyTrack(state.track); await tryPlay(); }
+    function stopThemeMusic(){ themePlayer.pause(); themePlayer.currentTime = 0; }
+
+    // ======================
+    // 👻 SUMMON BOO (works with your scenes.json schema)
+    // Path: assets/boo/summonboo/scenes.json
+    // ======================
+    function isGlowScene(sceneId){
+      return typeof sceneId === "string" && sceneId.startsWith("glow_");
+    }
+
+    function setGlowVisible(isVisible, hintText){
+      glowWrap.classList.toggle("hidden", !isVisible);
+      glowHint.classList.toggle("hidden", !isVisible);
+
+      if (isVisible) {
+        glowOrb.classList.add("isBreathing");
+        glowHint.textContent = hintText || "Watch the glow… in… and out…";
+      } else {
+        glowOrb.classList.remove("isBreathing");
+        glowHint.textContent = "";
+      }
+    }
+
+    function renderSummonScene(sceneId){
+      const data = state.summon.data;
+      const scene = data?.scenes?.[sceneId];
+
+      if (!scene) {
+        setGlowVisible(false);
+        booLineEl.textContent =
+          "Boo can’t find that scene.\n\nMissing:\n" +
+          `"${sceneId}"\n\n` +
+          "Check assets/boo/summonboo/scenes.json";
+        booChoicesEl.innerHTML = "";
+        const back = document.createElement("button");
+        back.className = "btn";
+        back.type = "button";
+        back.textContent = "Back";
+        back.addEventListener("click", () => {
+          const first = data?.meta?.firstScene || "summon_root_1";
+          renderSummonScene(first);
+        });
+        booChoicesEl.appendChild(back);
+        return;
+      }
+
+      state.summon.currentSceneId = sceneId;
+
+      const hint =
+        sceneId === "glow_1" ? "In… and out…" :
+        sceneId === "glow_2" ? "In… gentle… out… soft…" :
+        sceneId === "glow_3" ? "Last one… in… and out…" :
+        "";
+      setGlowVisible(isGlowScene(sceneId), hint);
+
+      booLineEl.textContent = (scene.lines || []).map(fillTemplate).join("\n\n");
+
+      booChoicesEl.innerHTML = "";
+      (scene.choices || []).forEach((ch) => {
+        const btn = document.createElement("button");
+        btn.className = "btn";
+        btn.type = "button";
+        btn.textContent = ch.label;
+
+        btn.addEventListener("click", () => {
+          // Your JSON uses return_to_story -> Continue -> END_RETURN
+          if (ch.goto === "END_RETURN") {
+            closeSummonBoo(true);
+            return;
+          }
+          renderSummonScene(ch.goto);
+        });
+
+        booChoicesEl.appendChild(btn);
+      });
+    }
+
+    function openSummonBoo(){
+      if (state.summon.overlayOpen) return;
+
+      state.summon.overlayOpen = true;
+      state.summon.previousFocus = document.activeElement;
+
+      state.summon.previousVolume = themePlayer.volume;
+      themePlayer.volume = Math.max(0.18, themePlayer.volume * 0.45);
+
+      booOverlay.classList.remove("hidden");
+
+      if (!state.summon.data || !state.summon.data.scenes) {
+        // Most common cause: running via file:// so fetch is blocked.
+        state.summon.data = {
+          meta: { firstScene: "error_1" },
+          scenes: {
+            error_1: {
+              lines: [
+                "Oops… Boo can’t load Summon scenes.\n\n" +
+                "If you’re opening index.html as a file (file://), fetch() may be blocked.\n\n" +
+                "Run a local server, or deploy to a host.\n\n" +
+                "Expected path:\nassets/boo/summonboo/scenes.json"
+              ],
+              choices: [{ label: "Close", goto: "END_RETURN" }]
+            }
+          }
+        };
+      }
+
+      const first = state.summon.data.meta?.firstScene || "summon_root_1";
+      renderSummonScene(first);
+
+      booCloseBtn.focus({ preventScroll: true });
+    }
+
+    function closeSummonBoo(restoreFocus){
+      if (!state.summon.overlayOpen) return;
+
+      state.summon.overlayOpen = false;
+      booOverlay.classList.add("hidden");
+      setGlowVisible(false);
+
+      if (typeof state.summon.previousVolume === "number") {
+        themePlayer.volume = state.summon.previousVolume;
+      }
+
+      if (restoreFocus && state.summon.previousFocus?.focus) {
+        state.summon.previousFocus.focus({ preventScroll: true });
+      }
+    }
+
+    async function loadSummonScenes(){
+      try {
+        const res = await fetch("assets/boo/summonboo/scenes.json", { cache: "no-store" });
+        if (!res.ok) throw new Error("Summon scenes fetch failed: " + res.status);
+        state.summon.data = await res.json();
+      } catch (err) {
+        console.error(err);
+        // Leave null; openSummonBoo will show a friendly fallback inside the modal.
+      }
+    }
+
+    // Attach ONE reliable handler (no double-bind)
+    summonLauncher.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openSummonBoo();
+    });
+
+    booCloseBtn.addEventListener("click", () => closeSummonBoo(true));
+    booOverlay.addEventListener("click", (e) => {
+      const modal = e.target.closest(".booModal");
+      if (!modal) closeSummonBoo(true);
+    });
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && state.summon.overlayOpen) {
+        e.preventDefault();
+        closeSummonBoo(true);
+      }
+    });
+
+    // ======================
+    // UI wiring
+    // ======================
+    document.getElementById("startBtn").addEventListener("click", () => {
+      startThemeMusic();
+      show("step2");
+    });
+
+    document.getElementById("backToWelcome").addEventListener("click", () => show("step1"));
+    document.getElementById("backToName").addEventListener("click", () => show("step2"));
+    document.getElementById("changeMood").addEventListener("click", () => show("step3"));
+
+    document.getElementById("toMood").addEventListener("click", () => {
+      const nm = cleanName(document.getElementById("nameInput").value);
+      if(!nm) return;
+      state.name = nm;
+      localStorage.setItem("munchkin_name", nm);
+      show("step3");
+    });
+
+    document.getElementById("step3").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-mood]");
+      if(!btn) return;
+
+      state.mood = btn.getAttribute("data-mood");
+      const story = pickStoryForMood(state.mood);
+
+      if(!story){
+        showNoStories(state.mood);
+        show("step4");
+        return;
+      }
+
+      if (story.type === "choose_your_own" && story.nodes && story.start) {
+        startInteractiveStory(story);
+        show("step4");
+        return;
+      }
+
+      renderNormalStory(story);
+      show("step4");
+    });
+
+    document.getElementById("anotherStory").addEventListener("click", () => {
+      if (state.mood === "adventure") {
+        const nextAdventure = pickAnotherAdventureStory();
+        if (nextAdventure) startInteractiveStory(nextAdventure);
+        return;
+      }
+
+      const story = pickStoryForMood(state.mood);
+      if (!story) return;
+
+      if (story.type === "choose_your_own" && story.nodes && story.start) {
+        startInteractiveStory(story);
+      } else {
+        renderNormalStory(story);
+      }
+    });
+
+    document.getElementById("restart").addEventListener("click", () => {
+      state.name = "";
+      state.mood = "";
+      stopInteractiveStoryState();
+      document.getElementById("nameInput").value = "";
+      stopThemeMusic();
+      closeSummonBoo(false);
+      show("step1");
+    });
+
+    document.getElementById("nameInput").value = localStorage.getItem("munchkin_name") || "";
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Boot
+    loadStories();
+    loadSummonScenes();
+    show("step1");
+  </script>
 </body>
 </html>
